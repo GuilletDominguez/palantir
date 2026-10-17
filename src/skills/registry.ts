@@ -1,7 +1,7 @@
 // Fuente única de verdad para las skills: la usan el mapa del juego,
 // los carteles del panel y (más adelante) el modo lista accesible.
 
-export type SkillId = 'vue' | 'react' | 'svelte' | 'angular' | 'css' | 'cyber' | 'python';
+export type SkillId = 'vue' | 'react' | 'svelte' | 'css' | 'cyber' | 'python';
 
 export interface Skill {
 	id: SkillId;
@@ -54,29 +54,70 @@ export const skills: Skill[] = [
 	{
 		id: 'react',
 		name: 'React',
-		tagline: 'Próximamente.',
+		tagline: 'El tablón de misiones del gremio, hecho con React 19.',
 		roof: ['#73eff7', '#41a6f6'],
 		tile: { x: 12, y: 7 },
-		ready: false,
-		practices: [],
+		ready: true,
+		practices: [
+			{
+				title: 'useReducer + Context',
+				detail: 'Un reductor puro con acciones tipadas (unión discriminada) y estado y dispatch en contextos separados para evitar renders de más.',
+			},
+			{
+				title: 'Acciones de formulario',
+				detail: '<form action> con useActionState para validar y devolver errores; useFormStatus desactiva el botón sin pasar props.',
+			},
+			{
+				title: 'useOptimistic',
+				detail: 'La misión aparece al instante mientras el "servidor" responde. Si falla (prueba con un dragón), se deshace sola.',
+			},
+			{
+				title: 'useDeferredValue',
+				detail: 'El buscador responde en cada tecla y el filtrado se procesa con prioridad baja; la lista se atenúa mientras tanto.',
+			},
+			{
+				title: 'Estado derivado',
+				detail: 'El oro y los filtros se calculan durante el render: sin useEffect ni estado duplicado que sincronizar.',
+			},
+			{
+				title: 'memo + CSS Modules',
+				detail: 'Las tarjetas solo se re-renderizan si cambian, y los estilos tienen nombres únicos por componente.',
+			},
+		],
 	},
 	{
 		id: 'svelte',
 		name: 'Svelte',
-		tagline: 'Próximamente.',
+		tagline: 'El caldero del alquimista, hecho con Svelte 5.',
 		roof: ['#ef7d57', '#b13e53'],
 		tile: { x: 24, y: 7 },
-		ready: false,
-		practices: [],
-	},
-	{
-		id: 'angular',
-		name: 'Angular',
-		tagline: 'Próximamente.',
-		roof: ['#b13e53', '#5d275d'],
-		tile: { x: 33, y: 7 },
-		ready: false,
-		practices: [],
+		ready: true,
+		practices: [
+			{
+				title: 'Runas: $state y $derived',
+				detail: 'El color, las estadísticas, la rareza y el nombre de la poción se derivan solos de los ingredientes.',
+			},
+			{
+				title: 'Estado en una clase .svelte.ts',
+				detail: 'La lógica del caldero vive fuera de los componentes, en una clase con campos reactivos y métodos.',
+			},
+			{
+				title: '$props, callbacks y $bindable',
+				detail: 'Props tipadas, eventos como funciones (onpick) y bind:value bidireccional solo donde hace falta.',
+			},
+			{
+				title: 'Snippets',
+				detail: '{#snippet} y {@render} reutilizan marcado con parámetros sin crear componentes nuevos; children sustituye a los slots.',
+			},
+			{
+				title: 'Movimiento y transiciones',
+				detail: 'Tween.of anima las barras, y fly/scale con animate:flip mueven los ingredientes y el recetario.',
+			},
+			{
+				title: '$effect para lo externo',
+				detail: 'Solo se usa para sincronizar con localStorage, y no se ejecuta en el servidor, así que el SSR es seguro.',
+			},
+		],
 	},
 	{
 		id: 'css',

@@ -1,0 +1,235 @@
+/* CSS Modules: los nombres de clase se convierten en únicos al compilar,
+   así que no chocan con los de Vue, Svelte o Tailwind. */
+
+.board {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: minmax(0, 1fr);
+	font-family: var(--font-body);
+	color: var(--color-px-w);
+}
+@media (min-width: 720px) {
+	.board {
+		grid-template-columns: minmax(0, 1fr) 16rem;
+	}
+}
+
+.main,
+.side {
+	display: grid;
+	gap: 0.9rem;
+	align-content: start;
+}
+
+/* ---------- filtros */
+.filters {
+	display: grid;
+	gap: 0.7rem;
+}
+.field {
+	display: grid;
+	gap: 0.35rem;
+}
+.field label {
+	font-family: var(--font-pixel);
+	font-size: 0.6rem;
+	color: var(--color-px-q);
+}
+.field input,
+.field select {
+	font: inherit;
+	font-size: 1.2rem;
+	padding: 0.35rem 0.6rem;
+	background: var(--color-px-o);
+	color: var(--color-px-w);
+	border: 2px solid var(--color-px-Q);
+	outline: none;
+}
+.field input:focus-visible,
+.field select:focus-visible {
+	border-color: var(--color-px-c);
+}
+.field input[aria-invalid] {
+	border-color: var(--color-px-r);
+}
+
+.tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+.tab,
+.tabActive {
+	cursor: pointer;
+	font-family: var(--font-pixel);
+	font-size: 0.55rem;
+	text-transform: capitalize;
+	padding: 0.45rem 0.6rem;
+	border: 2px solid var(--color-px-o);
+	background: var(--color-px-B);
+	color: var(--color-px-q);
+}
+.tabActive {
+	background: var(--color-px-c);
+	color: var(--color-px-o);
+}
+.tab:has(input:focus-visible),
+.tabActive:has(input:focus-visible) {
+	outline: 2px solid var(--color-px-w);
+	outline-offset: 2px;
+}
+.tabs input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* ---------- lista */
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0.5rem;
+	transition: opacity 0.15s;
+}
+.empty {
+	font-size: 1.2rem;
+	color: var(--color-px-q);
+}
+.card {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto auto;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.55rem 0.7rem;
+	background: var(--color-px-B);
+	border: 2px solid var(--color-px-o);
+	border-left: 6px solid var(--color-px-c);
+}
+.card[data-done='true'] {
+	border-left-color: var(--color-px-g);
+}
+.card[data-done='true'] .title {
+	text-decoration: line-through;
+	color: var(--color-px-q);
+}
+.card[data-pending='true'] {
+	border-left-color: var(--color-px-y);
+	animation: blink 0.6s steps(2) infinite;
+}
+@keyframes blink {
+	50% {
+		opacity: 0.6;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.card[data-pending='true'] {
+		animation: none;
+	}
+}
+.check {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	cursor: pointer;
+	min-width: 0;
+}
+.check input {
+	width: 1.1rem;
+	height: 1.1rem;
+	accent-color: var(--color-px-g);
+	flex: none;
+}
+.title {
+	font-size: 1.2rem;
+	line-height: 1.1;
+}
+.badge {
+	font-family: var(--font-pixel);
+	font-size: 0.5rem;
+	padding: 0.25rem 0.4rem;
+	border: 2px solid var(--color-px-o);
+	color: var(--color-px-o);
+}
+.badge[data-difficulty='fácil'] {
+	background: var(--color-px-l);
+}
+.badge[data-difficulty='media'] {
+	background: var(--color-px-y);
+}
+.badge[data-difficulty='difícil'] {
+	background: var(--color-px-O);
+}
+.reward {
+	font-family: var(--font-pixel);
+	font-size: 0.55rem;
+	color: var(--color-px-y);
+	white-space: nowrap;
+}
+.remove {
+	cursor: pointer;
+	font-family: var(--font-pixel);
+	font-size: 0.55rem;
+	padding: 0.25rem 0.4rem;
+	background: var(--color-px-r);
+	color: var(--color-px-w);
+	border: 2px solid var(--color-px-o);
+}
+.remove:disabled {
+	visibility: hidden;
+}
+
+/* ---------- panel lateral */
+.stats {
+	padding: 0.8rem;
+	background: var(--color-px-o);
+	border: 2px solid var(--color-px-Q);
+	font-size: 1.2rem;
+}
+.stats p {
+	margin: 0;
+}
+.gold {
+	font-family: var(--font-pixel);
+	font-size: 0.8rem;
+	color: var(--color-px-y);
+}
+.form {
+	display: grid;
+	gap: 0.7rem;
+	padding: 0.9rem;
+	background: var(--color-px-o);
+	border: 2px solid var(--color-px-Q);
+}
+.form h4 {
+	margin: 0;
+	font-family: var(--font-pixel);
+	font-size: 0.65rem;
+	color: var(--color-px-c);
+}
+.error {
+	margin: 0;
+	font-size: 1.1rem;
+	line-height: 1.1;
+	color: var(--color-px-O);
+}
+.submit {
+	cursor: pointer;
+	justify-self: start;
+	font-family: var(--font-pixel);
+	font-size: 0.6rem;
+	padding: 0.5rem 0.8rem;
+	background: var(--color-px-c);
+	color: var(--color-px-o);
+	border: 2px solid var(--color-px-o);
+	box-shadow: inset -2px -2px 0 var(--color-px-u);
+}
+.submit:disabled {
+	cursor: progress;
+	background: var(--color-px-Q);
+	box-shadow: none;
+}

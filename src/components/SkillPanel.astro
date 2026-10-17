@@ -1,6 +1,8 @@
 ---
 import { skills } from '../skills/registry';
 import VueShop from '../skills/vue/VueShop.vue';
+import QuestBoard from '../skills/react/QuestBoard';
+import AlchemyLab from '../skills/svelte/AlchemyLab.svelte';
 import AboutPanel from './AboutPanel.astro';
 import HobbiesPanel from './HobbiesPanel.astro';
 ---
@@ -41,6 +43,8 @@ import HobbiesPanel from './HobbiesPanel.astro';
 				<div class="min-w-0">
 					<p class="mb-4 text-xl text-px-q">{skill.tagline}</p>
 					{skill.id === 'vue' && <VueShop client:visible />}
+					{skill.id === 'react' && <QuestBoard client:visible />}
+					{skill.id === 'svelte' && <AlchemyLab client:visible />}
 					{!skill.ready && (
 						<p class="font-pixel text-xs leading-loose text-px-y">🚧 Edificio en construcción.</p>
 					)}
