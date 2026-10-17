@@ -1,0 +1,24 @@
+---
+import { hobbies } from '../data/hobbies';
+import PixelIcon from './PixelIcon.astro';
+---
+
+<div class="grid gap-5 p-6">
+	<p class="text-xl text-px-q">
+		La tienda del pueblo donde recargo energía. Cada afición da un <span class="text-px-g">bonus</span> que también llevo
+		al trabajo.
+	</p>
+
+	<ul class="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(12rem,1fr))]">
+		{
+			hobbies.map((h) => (
+				<li class="grid content-start justify-items-center gap-2 border-2 border-px-o bg-px-B p-4 text-center">
+					<PixelIcon sprite={h.sprite} size={56} />
+					<h3 class="font-pixel text-[0.65rem] text-px-w">{h.name}</h3>
+					<p class="font-pixel text-[0.55rem] text-px-g">{h.bonus}</p>
+					<p class="text-lg leading-tight text-px-q">{h.description}</p>
+				</li>
+			))
+		}
+	</ul>
+</div>

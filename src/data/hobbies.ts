@@ -1,0 +1,107 @@
+// Contenido de la "tienda" de Aficiones. Los sprites son 12×12 con las letras de la paleta del juego.
+
+export interface Hobby {
+	name: string;
+	description: string;
+	/** "Bonus" de RPG que aporta la afición. */
+	bonus: string;
+	sprite: string[];
+}
+
+export const hobbies: Hobby[] = [
+	{
+		name: 'CrossFit',
+		description: 'Entrenamiento funcional de alta intensidad. Cada WOD es una pequeña meta que superar.',
+		bonus: '+ Constancia',
+		sprite: [
+			'...QQQQQQ...',
+			'..QQ....QQ..',
+			'..Q......Q..',
+			'..QQ....QQ..',
+			'.QQQQQQQQQQ.',
+			'QQqQQQQQQQQQ',
+			'QqQQQQQQQQQQ',
+			'QQQQQQQQQQQQ',
+			'QQQQQQQQQQQQ',
+			'.QQQQQQQQQQ.',
+			'..QQQQQQQQ..',
+			'............',
+		],
+	},
+	{
+		name: 'Pádel',
+		description: 'Mi forma favorita de desconectar: partido con amigos y a por la siguiente bola.',
+		bonus: '+ Trabajo en equipo',
+		sprite: [
+			'...bbbbb....',
+			'..bbbbbbb...',
+			'.bbobbobbb..',
+			'.bbbbbbbbb..',
+			'.bbobbobbb..',
+			'.bbbbbbbbb..',
+			'..bbbbbbb...',
+			'...bbbbb....',
+			'.....kk.....',
+			'.....kk..yy.',
+			'.....kk..yy.',
+			'.....KK.....',
+		],
+	},
+	{
+		name: 'Cine',
+		description: 'Me encanta descubrir películas y comentarlas después.',
+		bonus: '+ Creatividad',
+		sprite: [
+			'wowowowowowo',
+			'owowowowowow',
+			'oooooooooooo',
+			'oBBBBBBBBBBo',
+			'oBwwwwBBBBBo',
+			'oBBBBBBBBBBo',
+			'oBwwwBBwwwBo',
+			'oBBBBBBBBBBo',
+			'oBwwwwwBBBBo',
+			'oBBBBBBBBBBo',
+			'oooooooooooo',
+			'............',
+		],
+	},
+	{
+		name: 'Series',
+		description: 'Siempre tengo alguna serie a medias y otra en la lista de pendientes.',
+		bonus: '+ Narrativa',
+		sprite: [
+			'...o....o...',
+			'....o..o....',
+			'.....oo.....',
+			'oooooooooooo',
+			'occuuuuuoQQo',
+			'ocuuuuuuoQyo',
+			'ouuuuuuuoQQo',
+			'ouuuuuuuoQyo',
+			'ouuuuuuuoQQo',
+			'oooooooooooo',
+			'.oo......oo.',
+			'............',
+		],
+	},
+	{
+		name: 'Warhammer',
+		description: 'Modelismo y pintura de miniaturas: paciencia y precisión, igual que con el código.',
+		bonus: '+ Atención al detalle',
+		sprite: [
+			'...bbbbbb...',
+			'..bbbbbbbb..',
+			'.bbbbbbbbbb.',
+			'.bbrrbbrrbb.',
+			'.bbrrbbrrbb.',
+			'.bbbbbbbbbb.',
+			'.bbbqqqqbbb.',
+			'..bbqoqobb..',
+			'..bbqqqqbb..',
+			'...bbbbbb...',
+			'....oooo....',
+			'...yyyyyy...',
+		],
+	},
+];

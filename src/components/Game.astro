@@ -1,0 +1,68 @@
+---
+// El juego es TypeScript plano: no necesita framework ni hidratación,
+// Astro empaqueta el <script> y lo carga como módulo.
+---
+
+<div class="relative h-dvh w-full overflow-hidden bg-px-d">
+	<canvas id="world" class="block h-full w-full [image-rendering:pixelated]" aria-label="Pueblo del portfolio" role="img"
+	></canvas>
+
+	<div
+		id="prompt"
+		hidden
+		class="pixel-frame pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 bg-px-o px-4 py-3 font-pixel text-[0.6rem] whitespace-nowrap text-px-w sm:text-xs"
+		aria-live="polite"
+	>
+		<span data-label class="text-px-y"></span> · pulsa <kbd class="text-px-g">A</kbd> / <kbd class="text-px-g">Enter</kbd>
+	</div>
+
+	<p
+		class="pointer-events-none absolute bottom-3 left-3 hidden font-pixel text-[0.55rem] text-px-w/80 [@media(pointer:fine)]:block"
+	>
+		Muévete con <kbd>WASD</kbd> o flechas
+	</p>
+
+	<div id="touch" class="pointer-events-none absolute inset-x-0 bottom-0 hidden p-5 [@media(pointer:coarse)]:block">
+		<div class="flex items-end justify-between">
+			<div class="pointer-events-auto grid grid-cols-3 grid-rows-3 gap-1">
+				<button data-dir="up" aria-label="Arriba" class="dpad col-start-2">▲</button>
+				<button data-dir="left" aria-label="Izquierda" class="dpad col-start-1 row-start-2">◀</button>
+				<button data-dir="right" aria-label="Derecha" class="dpad col-start-3 row-start-2">▶</button>
+				<button data-dir="down" aria-label="Abajo" class="dpad col-start-2 row-start-3">▼</button>
+			</div>
+			<button
+				data-action
+				aria-label="Interactuar"
+				class="pointer-events-auto size-16 touch-none rounded-full border-4 border-px-o bg-px-r font-pixel text-lg text-px-w select-none active:bg-px-O"
+				>A</button
+			>
+		</div>
+	</div>
+</div>
+
+<style>
+	.dpad {
+		width: 3rem;
+		height: 3rem;
+		touch-action: none;
+		user-select: none;
+		background: var(--color-px-B);
+		color: var(--color-px-w);
+		border: 3px solid var(--color-px-o);
+		font-size: 1rem;
+		opacity: 0.85;
+	}
+	.dpad:active {
+		background: var(--color-px-Q);
+	}
+</style>
+
+<script>
+	import { startGame } from '../game/engine';
+
+	startGame({
+		canvas: document.querySelector<HTMLCanvasElement>('#world')!,
+		touch: document.querySelector<HTMLElement>('#touch'),
+		prompt: document.querySelector<HTMLElement>('#prompt')!,
+	});
+</script>

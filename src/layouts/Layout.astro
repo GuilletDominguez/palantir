@@ -1,7 +1,17 @@
 ---
+import '@fontsource/press-start-2p';
+import '@fontsource/vt323';
 import '../styles/global.css';
 
-const { title = 'Palantir' } = Astro.props;
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'Palantir',
+	description = 'Portfolio jugable de 8 bits: recorre el pueblo y descubre cada skill hecha con su propio framework.',
+} = Astro.props;
 ---
 
 <html lang="es">
@@ -9,11 +19,13 @@ const { title = 'Palantir' } = Astro.props;
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#1a1c2c" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+	<body class="min-h-dvh antialiased">
 		<slot />
 	</body>
 </html>

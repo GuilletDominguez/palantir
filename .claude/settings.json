@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -)",
+      "Bash(git mv *)",
+      "Bash(sed -i 's/\"pixelate\": \"node scripts\\\\/pixelate-portrait.mjs\"/\"statue\": \"node scripts\\\\/pixelate-portrait.mjs\"/' package.json)",
+      "Bash(node scripts/generate-statue.mjs)",
+      "Bash(npx astro *)"
+    ]
+  }
+}

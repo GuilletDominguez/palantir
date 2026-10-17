@@ -1,0 +1,156 @@
+---
+import { Image } from 'astro:assets';
+import foto from '../assets/foto.jpg';
+import { profile } from '../data/profile';
+
+const heading = 'mb-3 font-pixel text-[0.65rem] text-px-y';
+---
+
+<div class="grid gap-8 p-6">
+	<!-- Cabecera tipo hoja de personaje -->
+	<header class="grid items-center gap-6 sm:grid-cols-[auto_minmax(0,1fr)]">
+		<figure class="mx-auto grid justify-items-center gap-3">
+			<div class="frame">
+				<Image src={foto} width={176} height={176} alt={`Foto de ${profile.name}`} class="block" />
+			</div>
+		</figure>
+
+		<div class="grid gap-3">
+			<div>
+				<p class="font-pixel text-sm leading-relaxed text-px-w sm:text-base">{profile.name}</p>
+				<p class="text-xl text-px-g">{profile.headline}</p>
+			</div>
+			<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-pixel text-[0.6rem] leading-relaxed">
+				<dt class="text-px-q">Clase</dt>
+				<dd>{profile.role}</dd>
+				<dt class="text-px-q">Nivel</dt>
+				<dd class="text-px-y">{profile.yearsOfExperience} <span class="text-px-q">(años de experiencia)</span></dd>
+				<dt class="text-px-q">Origen</dt>
+				<dd>{profile.location}</dd>
+				<dt class="text-px-q">Idiomas</dt>
+				<dd>{profile.languages}</dd>
+			</dl>
+			<ul class="flex flex-wrap gap-2">
+				{
+					profile.links.map((l) => (
+						<li>
+							<a
+								href={l.href}
+								class="inline-block border-2 border-px-o bg-px-b px-3 py-2 font-pixel text-[0.6rem] text-px-w shadow-[inset_-2px_-2px_0_var(--color-px-n)] hover:bg-px-u focus-visible:outline-2 focus-visible:outline-px-w"
+								{...(l.href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })}
+							>
+								{l.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</header>
+
+	<section>
+		<h3 class={heading}>Perfil</h3>
+		<p class="text-xl leading-snug">{profile.summary}</p>
+	</section>
+
+	<section>
+		<h3 class={heading}>Misiones completadas</h3>
+		<ol class="grid gap-4 border-l-4 border-px-Q pl-5">
+			{
+				profile.experience.map((job) => (
+					<li class="quest">
+						<p class="font-pixel text-[0.6rem] leading-relaxed text-px-w">{job.role}</p>
+						<p class="text-lg text-px-g">
+							{job.company} <span class="text-px-q">· {job.period}</span>
+						</p>
+						<ul class="mt-1 grid gap-0.5 text-lg leading-tight text-px-q">
+							{job.tasks.map((t) => <li>▸ {t}</li>)}
+						</ul>
+					</li>
+				))
+			}
+		</ol>
+	</section>
+
+	<section>
+		<h3 class={heading}>Habilidades</h3>
+		<dl class="grid gap-3">
+			{
+				profile.skills.map((s) => (
+					<div class="grid gap-1.5 sm:grid-cols-[9rem_minmax(0,1fr)]">
+						<dt class="font-pixel text-[0.55rem] leading-relaxed text-px-q">{s.group}</dt>
+						<dd class="flex flex-wrap gap-1.5">
+							{s.items.map((i) => (
+								<span class="border-2 border-px-o bg-px-B px-2 text-lg leading-snug">{i}</span>
+							))}
+						</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section class="grid gap-6 md:grid-cols-2">
+		<div>
+			<h3 class={heading}>Formación</h3>
+			<ul class="grid gap-2">
+				{
+					profile.education.map((e) => (
+						<li class="text-lg leading-tight">
+							<span class="text-px-w">{e.title}</span>
+							<span class="block text-px-q">
+								{e.place} · {e.period}
+							</span>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+		<details class="group">
+			<summary class={`${heading} cursor-pointer list-none`}>
+				<span class="inline-block transition-transform group-open:rotate-90">▶</span> Certificaciones
+			</summary>
+			<dl class="grid gap-2">
+				{
+					profile.certifications.map((c) => (
+						<div>
+							<dt class="font-pixel text-[0.55rem] leading-relaxed text-px-g">{c.group}</dt>
+							<dd class="text-lg leading-tight text-px-q">{c.items.join(' · ')}</dd>
+						</div>
+					))
+				}
+			</dl>
+		</details>
+	</section>
+</div>
+
+<style>
+	/* Marco dorado de cuadro de museo, a juego con la placa de la estatua */
+	.frame {
+		padding: 8px;
+		background: var(--color-px-y);
+		border: 4px solid var(--color-px-o);
+		box-shadow:
+			inset -4px -4px 0 var(--color-px-k),
+			inset 4px 4px 0 #fff3c4;
+	}
+	.frame :global(img) {
+		border: 4px solid var(--color-px-o);
+		max-width: min(176px, 50vw);
+		height: auto;
+	}
+	/* Marcador de la línea de tiempo */
+	.quest {
+		position: relative;
+	}
+	.quest::before {
+		content: '';
+		position: absolute;
+		left: calc(-1.25rem - 8px);
+		top: 0.2rem;
+		width: 12px;
+		height: 12px;
+		background: var(--color-px-y);
+		border: 2px solid var(--color-px-o);
+	}
+</style>

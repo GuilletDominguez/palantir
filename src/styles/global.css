@@ -1,1 +1,47 @@
 @import "tailwindcss";
+
+/* Paleta del juego (src/game/palette.ts) expuesta como tokens: bg-px-g, text-px-y... */
+@theme {
+	--color-px-o: #1a1c2c;
+	--color-px-w: #f4f4f4;
+	--color-px-q: #94b0c2;
+	--color-px-Q: #566c86;
+	--color-px-B: #333c57;
+	--color-px-n: #29366f;
+	--color-px-b: #3b5dc9;
+	--color-px-u: #41a6f6;
+	--color-px-c: #73eff7;
+	--color-px-l: #a7f070;
+	--color-px-g: #38b764;
+	--color-px-d: #257179;
+	--color-px-y: #ffcd75;
+	--color-px-O: #ef7d57;
+	--color-px-r: #b13e53;
+	--color-px-p: #5d275d;
+	--color-px-k: #8f563b;
+
+	--font-pixel: "Press Start 2P", monospace;
+	--font-body: "VT323", monospace;
+}
+
+html,
+body {
+	background: var(--color-px-o);
+	color: var(--color-px-w);
+	font-family: var(--font-body);
+}
+
+kbd {
+	font: inherit;
+}
+
+/* Marco pixelado con esquinas recortadas */
+.pixel-frame {
+	--frame: var(--color-px-w);
+	box-shadow:
+		0 -4px 0 0 var(--frame),
+		0 4px 0 0 var(--frame),
+		-4px 0 0 0 var(--frame),
+		4px 0 0 0 var(--frame),
+		0 0 0 4px var(--color-px-o) inset;
+}
