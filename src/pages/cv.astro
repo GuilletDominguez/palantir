@@ -1,0 +1,285 @@
+---
+// /cv/: el CV en HTML con el diseño del CV original (banda superior con foto,
+// títulos azules). Es la fuente del PDF (scripts/generate-cv.mjs lo imprime con
+// Chrome) y también se puede leer o imprimir directamente. Texto real en una
+// columna: lo leen personas y filtros automáticos (ATS).
+import { Image } from 'astro:assets';
+import foto from '../assets/foto.jpg';
+import Rich from '../components/Rich.astro';
+import Layout from '../layouts/Layout.astro';
+import { buildCv, CV_FILENAME } from '../lib/cv';
+
+const cv = buildCv(Astro.site);
+---
+
+<Layout title={`${cv.name} · CV`} description={`${cv.role}. ${cv.headline}.`} noindex>
+	<main class="cv">
+		<nav class="actions" aria-label="Descargas">
+			<a href="/cv.pdf" download={`${CV_FILENAME}.pdf`}>Descargar PDF</a>
+			<a href="/cv.md" download={`${CV_FILENAME}.md`}>Descargar Markdown</a>
+			<a href="/">Volver al portfolio</a>
+		</nav>
+
+		<article class="page">
+			<header class="band">
+				<Image src={foto} width={320} height={320} alt={`Foto de ${cv.name}`} class="photo" />
+				<div>
+					<h1>{cv.name}</h1>
+					<p class="role">{cv.role} · {cv.headline}</p>
+					{
+						cv.contactLines.map((line) => (
+							<p class="contact">
+								{line.map((c, i) => (
+									<>
+										{i > 0 && <span class="sep">|</span>}
+										{c.href ? <a href={c.href}>{c.text}</a> : <span>{c.text}</span>}
+									</>
+								))}
+							</p>
+						))
+					}
+				</div>
+			</header>
+
+			<div class="body">
+				<section>
+					<h2>Perfil</h2>
+					<p><Rich text={cv.summary} /></p>
+				</section>
+
+				<section>
+					<h2>Experiencia profesional</h2>
+					{
+						cv.experience.map((job) => (
+							<div class="job">
+								<h3>{job.role}</h3>
+								<p class="meta">
+									{job.company} · {job.period}
+								</p>
+								<ul>
+									{job.tasks.map((t) => (
+										<li>
+											<Rich text={t} />
+										</li>
+									))}
+								</ul>
+							</div>
+						))
+					}
+				</section>
+
+				<section>
+					<h2>Habilidades</h2>
+					{
+						cv.skills.map((s) => (
+							<p class="line">
+								<strong class="label">{s.group}:</strong> {s.text}
+							</p>
+						))
+					}
+				</section>
+
+				<section>
+					<h2>Formación</h2>
+					{
+						cv.education.map((e) => (
+							<p class="line">
+								<strong>{e.title}</strong> · {e.place} · {e.period}
+							</p>
+						))
+					}
+				</section>
+
+				<section>
+					<h2>Certificaciones · Formación no reglada</h2>
+					{
+						cv.certifications.map(({ group, issuers, items }) => (
+							<p class="line">
+								<strong class="label">{group}:</strong>{' '}
+								{items.map((c, i) => (
+									<>
+										{i > 0 && ' · '}
+										<a href={c.url}>{c.title}</a>
+									</>
+								))}{' '}
+								({issuers})
+							</p>
+						))
+					}
+				</section>
+			</div>
+		</article>
+	</main>
+</Layout>
+
+<style>
+	:global(html),
+	:global(body) {
+		background: #e5e7ee;
+		color: #1f2233;
+	}
+	.cv {
+		--blue: #3b4fd8;
+		--band: #eef0fb;
+		--gray: #5f6577;
+		--rule: #dde1ec;
+		padding: 1.5rem 1rem 3rem;
+		font-family: 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif;
+		font-size: 10.5pt;
+		line-height: 1.42;
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+		margin-bottom: 1.25rem;
+	}
+	.actions a {
+		padding: 0.4rem 0.8rem;
+		color: #fff;
+		background: var(--blue);
+		border-radius: 4px;
+		text-decoration: none;
+	}
+	.actions a:last-child {
+		color: var(--blue);
+		background: #fff;
+		border: 1px solid var(--blue);
+	}
+	.page {
+		max-width: 210mm;
+		margin: 0 auto;
+		background: #fff;
+		box-shadow: 0 2px 12px rgb(0 0 0 / 0.12);
+	}
+
+	/* Cabecera: banda clara con barra azul a la izquierda y foto circular */
+	.band {
+		display: flex;
+		align-items: center;
+		gap: 1.6rem;
+		padding: 1.3rem 2rem 1.3rem 2.6rem;
+		background: var(--band);
+		border-left: 12px solid var(--blue);
+	}
+	.band :global(.photo) {
+		flex: none;
+		width: 140px;
+		height: 140px;
+		border-radius: 50%;
+		border: 3px solid var(--blue);
+		object-fit: cover;
+	}
+	h1 {
+		margin: 0;
+		font-size: 25pt;
+		font-weight: bold;
+		line-height: 1.1;
+	}
+	.role {
+		margin: 0.35rem 0 0.6rem;
+		font-size: 12.5pt;
+		font-weight: bold;
+		color: var(--blue);
+	}
+	.contact {
+		margin: 0.1rem 0;
+		color: var(--gray);
+	}
+	.contact a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.sep {
+		margin: 0 0.55rem;
+		color: #a3a8b8;
+	}
+
+	.body {
+		padding:0 0.6rem 2.2rem 1.6rem;
+	}
+	h2 {
+		margin: 0.95rem 0 0.4rem;
+		padding-bottom: 0.15rem;
+		font-size: 11.5pt;
+		font-weight: bold;
+		text-transform: uppercase;
+		color: var(--blue);
+		border-bottom: 1px solid var(--rule);
+	}
+	h3 {
+		margin: 0.55rem 0 0;
+		font-size: 12pt;
+		font-weight: bold;
+	}
+	h4 {
+		margin: 0.55rem 0 0;
+		font-size: 10.5pt;
+		font-weight: bold;
+	}
+	/* Un título nunca se queda solo al final de una página */
+	h2,
+	h3,
+	h4 {
+		break-after: avoid;
+	}
+	.meta {
+		margin: 0 0 0.15rem;
+		color: var(--gray);
+	}
+	p {
+		margin: 0.2rem 0;
+	}
+	.line {
+		margin: 0.1rem 0;
+	}
+	.label {
+		color: var(--blue);
+	}
+	/* El preflight de Tailwind quita las viñetas: aquí se recuperan */
+	ul {
+		margin: 0.15rem 0;
+		padding-left: 1.2rem;
+		list-style: disc;
+	}
+	li {
+		margin: 0.1rem 0;
+	}
+	strong {
+		font-weight: bold;
+	}
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.body a:hover {
+		color: var(--blue);
+		text-decoration: underline;
+	}
+	.job {
+		break-inside: avoid;
+	}
+
+	/* Impresión (y PDF): A4 sin márgenes para que la banda llegue al borde */
+	@page {
+		size: A4;
+		margin: 0;
+	}
+	@media print {
+		:global(html),
+		:global(body) {
+			background: #fff;
+		}
+		.cv {
+			padding: 0;
+		}
+		.actions {
+			display: none;
+		}
+		.page {
+			max-width: none;
+			box-shadow: none;
+		}
+	}
+</style>

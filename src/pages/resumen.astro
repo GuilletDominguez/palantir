@@ -8,6 +8,7 @@ import HobbiesPanel from '../components/HobbiesPanel.astro';
 import Projects from '../components/Projects.astro';
 import SkillCard from '../components/resumen/SkillCard.astro';
 import { profile } from '../data/profile';
+import { CV_FILENAME } from '../lib/cv';
 import Layout from '../layouts/Layout.astro';
 import Tailor from '../skills/css/Tailor.astro';
 import Barracks from '../skills/cyber/Barracks.astro';
@@ -47,7 +48,11 @@ const heading = 'font-pixel text-sm leading-relaxed text-px-y sm:text-base';
 					<h1 class="font-pixel text-base leading-relaxed text-px-w sm:text-xl">{profile.name}</h1>
 					<p class="text-2xl text-px-g">{profile.role} · {profile.headline}</p>
 				</div>
-				<a href="/" class="button">▶ Jugar en el pueblo</a>
+				<div class="flex flex-wrap gap-2">
+					<a href="/" class="button">▶ Jugar en el pueblo</a>
+					<a href="/cv.pdf" download={`${CV_FILENAME}.pdf`} class="button cv">CV en PDF</a>
+					<a href="/cv.md" download={`${CV_FILENAME}.md`} class="button cv">CV en Markdown</a>
+				</div>
 			</div>
 			<p class="max-w-3xl text-xl leading-snug text-px-q">
 				Mi portfolio es un pueblo de 8 bits donde cada edificio es una demo hecha con su propio framework. Esta es la
@@ -240,6 +245,13 @@ const heading = 'font-pixel text-sm leading-relaxed text-px-y sm:text-base';
 	}
 	.button:hover {
 		background: var(--color-px-l);
+	}
+	.button.cv {
+		background: var(--color-px-y);
+		box-shadow: inset -2px -2px 0 var(--color-px-O);
+	}
+	.button.cv:hover {
+		background: var(--color-px-w);
 	}
 	.nav-link {
 		color: var(--color-px-w);

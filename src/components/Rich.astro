@@ -1,0 +1,9 @@
+---
+// Pinta un texto con **palabras clave** en negrita (los datos del perfil las
+// marcan así). Cada trozo se inserta como texto: nunca se interpreta como HTML.
+// strongClass: clases para las negritas (en el pueblo, color en vez de grosor).
+const { text, strongClass } = Astro.props;
+const parts = text.split('**');
+---
+
+{parts.map((part, i) => (i % 2 === 1 ? <strong class={strongClass}>{part}</strong> : part))}

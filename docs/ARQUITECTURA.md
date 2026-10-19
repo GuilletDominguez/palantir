@@ -772,6 +772,19 @@ Cloudflare Pages lee este archivo al desplegar. Son las mismas cabeceras que exp
 - **`sitemap.xml` y `robots.txt`** son endpoints de Astro ([src/pages/](../src/pages/)) que se generan desde `site`. **`manifest.webmanifest`** da nombre, colores e icono si alguien guarda la web en la pantalla de inicio.
 - **`.node-version`** fija Node 24 para el build de Cloudflare.
 
+## 20. El CV descargable
+
+En «Sobre mí» (en el pueblo y en la versión rápida) y en la cabecera de la versión rápida se puede descargar el CV en **PDF** y en **Markdown**. También se puede ver como página en [/cv/](../src/pages/cv.astro).
+
+**Una sola fuente.** [src/lib/cv.js](../src/lib/cv.js) monta el CV a partir de los mismos datos que la web: el perfil, las certificaciones (con su enlace de verificación) y las demos del portfolio. De ahí salen las tres versiones, así que nunca dicen cosas distintas.
+
+- **Markdown** ([/cv.md](../src/pages/cv.md.js)): un endpoint que se genera en cada build.
+- **PDF**: Chrome imprime la página `/cv/`. Esa página tiene estilo de impresión sobrio a propósito: una columna, texto real, encabezados estándar y tamaño A4 con `@page`. Así la lee bien una persona y también un **ATS**, los filtros automáticos de CV de las empresas. Detalles de impresión: `break-after: avoid` para que un título no se quede solo al final de una página, y las viñetas recuperadas porque el preflight de Tailwind las quita.
+
+**Que el PDF no se quede desactualizado.** El build de Cloudflare no tiene Chrome, así que el PDF se genera en local con `npm run cv` y se sube al repo. Ese script guarda también la **huella SHA-256** del CV en Markdown con el que se hizo ([scripts/cv-pdf.sha256](../scripts/cv-pdf.sha256)). En cada build, [scripts/check-cv.mjs](../scripts/check-cv.mjs) compara esa huella con la del Markdown recién generado. Si alguien cambia un dato del CV y no regenera el PDF, **el build falla** con el mensaje «Ejecuta: npm run cv». Así nunca se publica un PDF que contradiga la web.
+
+`npm run og` y `npm run cv` comparten [scripts/lib/chrome.mjs](../scripts/lib/chrome.mjs): compilar, levantar `astro preview` y ejecutar Chrome sin ventana.
+
 ## Cómo añadir una skill nueva
 
 1. Rellena su entrada en [registry.js](../src/skills/registry.js): `practices`, `tagline` y `ready: true`. El edificio ya aparece en el mapa.
@@ -787,7 +800,8 @@ npm run dev           # servidor de desarrollo (o: npx astro dev --background)
 npm test              # tests con Vitest
 npm run favicon       # regenera el icono "</>" (SVG + PNG) en public/
 npm run og            # regenera public/og.png (necesita Chrome)
-npm run build         # build estático en dist/ + comprobación de la CSP
+npm run cv            # regenera public/cv.pdf (necesita Chrome): hazlo tras cambiar datos del CV
+npm run build         # build estático en dist/ + comprobaciones de la CSP y del PDF del CV
 ```
 
 ## Próximas fases

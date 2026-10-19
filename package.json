@@ -7,13 +7,14 @@
   },
   "scripts": {
     "dev": "astro dev --host",
-    "build": "astro build && node scripts/check-csp.mjs",
+    "build": "astro build && node scripts/check-csp.mjs && node scripts/check-cv.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "statue": "node scripts/generate-statue.mjs",
     "test": "vitest run",
     "favicon": "node scripts/generate-favicon.mjs",
-    "og": "node scripts/generate-og.mjs"
+    "og": "node scripts/generate-og.mjs",
+    "cv": "node scripts/generate-cv.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.0",
