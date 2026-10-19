@@ -48,7 +48,7 @@ function isolateVueFromReactRefresh() {
 // https://astro.build/config
 export default defineConfig({
   // URL pública: la usan la canónica, el sitemap y la imagen para redes sociales
-  site: 'https://guillermo-dominguez.pages.dev',
+  site: 'https://guillermo-dominguez-portfolio.guilledg1.workers.dev',
 
   // Sin Markdown en el proyecto: se desactiva Shiki, que pinta con estilos en línea
   // incompatibles con la CSP.
