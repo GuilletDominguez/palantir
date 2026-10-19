@@ -1,0 +1,5 @@
+# Redirecciones. Cloudflare Pages lee este archivo solo al desplegar.
+
+# La versión rápida pasó de /resumen/ a la portada: los enlaces antiguos siguen funcionando.
+/resumen   /  301
+/resumen/  /  301

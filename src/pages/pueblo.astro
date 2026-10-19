@@ -1,0 +1,22 @@
+---
+import Game from '../components/Game.astro';
+import SkillPanel from '../components/SkillPanel.astro';
+import { profile } from '../data/profile';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title={`${profile.name} · Portfolio jugable`}>
+	<a
+		href="/"
+		class="sr-only z-50 bg-px-y px-4 py-3 font-pixel text-xs text-px-o focus:not-sr-only focus:absolute focus:top-4 focus:left-1/2 focus:-translate-x-1/2"
+		>Ver el portfolio sin jugar</a
+	>
+	<h1 class="sr-only">Guillermo Domínguez — portfolio de 8 bits</h1>
+	<noscript>
+		<p class="bg-px-y p-4 text-center font-pixel text-xs leading-relaxed text-px-o">
+			El pueblo necesita JavaScript. <a href="/" class="underline">Ver el portfolio sin jugar</a>.
+		</p>
+	</noscript>
+	<Game />
+	<SkillPanel />
+</Layout>

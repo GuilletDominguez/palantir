@@ -1,6 +1,6 @@
 // sitemap.xml: las páginas que deben indexar los buscadores. Se genera en el
 // build a partir de `site` (astro.config.mjs), así que sigue al dominio.
-const PAGES = ['/', '/resumen/'];
+const PAGES = ['/', '/pueblo/'];
 
 export function GET({ site }) {
 	const urls = PAGES.map((path) => `  <url><loc>${new URL(path, site).href}</loc></url>`).join('\n');

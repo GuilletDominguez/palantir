@@ -697,14 +697,16 @@ Aquí el visitante ejecuta código de verdad, así que hay varias capas:
 
 **El agujero que encontré al probarlo.** La primera versión precargaba `pyodide.http` antes de aislar el worker, y ese módulo **guarda su propia referencia a `fetch`**. Mi verificación miraba el global, que estaba bien bloqueado, pero `pyfetch()` seguía usando la copia: la petición salió (y solo falló por CORS). La lección es que **aislar no es solo borrar globales**: cualquier referencia capturada antes sobrevive. Ahora solo se precargan módulos puros de la biblioteca estándar. El ejemplo «Intento de escapar» lo comprueba en vivo: intenta `fetch`, `eval` con `import()`, `new Function`, un `pyfetch` a la propia web y un `loadPackage`, y todo sale bloqueado.
 
-## 17. La versión rápida (`/resumen/`)
+## 17. La versión rápida (la portada, `/`)
 
-Para quien no tiene tiempo (o no puede) jugar: [src/pages/resumen.astro](../src/pages/resumen.astro) muestra todo el portfolio en una página normal:
+Para quien no tiene tiempo (o no puede) jugar: [src/pages/index.astro](../src/pages/index.astro) muestra todo el portfolio en una página normal:
 
 - una ficha por demo con qué hace, la tecnología, cómo está hecha y el enlace al código, más un desplegable para probarla ahí mismo;
 - la arquitectura, «Sobre mí», certificaciones, proyectos y aficiones.
 
 Se llega desde un botón fijo arriba a la derecha del pueblo, desde un enlace de salto (el primer elemento que recibe el foco con el teclado), desde la bienvenida y desde el `<noscript>`.
+
+**Es la portada.** Al principio vivía en `/resumen/` y el pueblo era la portada. Se intercambiaron porque quien llega desde un CV o LinkedIn suele tener poco tiempo: primero ve el contenido, y el pueblo ([src/pages/pueblo.astro](../src/pages/pueblo.astro), en `/pueblo/`) queda a un clic con «▶ Jugar en el pueblo». La ruta antigua redirige a `/` con un 301 desde [public/_redirects](../public/_redirects), para no romper enlaces ya compartidos.
 
 **Una sola fuente de datos.** Las fichas salen de [registry.js](../src/skills/registry.js), igual que los carteles del pueblo; para eso cada skill tiene ahora `summary`, `stack` y `source`. «Sobre mí», «Aficiones», certificaciones y proyectos son los mismos componentes que se ven en los edificios. Cambiar algo en un sitio lo cambia en los dos.
 
