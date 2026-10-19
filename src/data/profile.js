@@ -13,7 +13,7 @@ export const profile = {
 
 	links: [
 		{ label: 'GitHub', href: 'https://github.com/GuilletDominguez' },
-		{ label: 'LinkedIn', href: 'www.linkedin.com/in/guillermodominguezgarcia' },
+		{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/guillermodominguezgarcia' },
 		{ label: 'Email', href: 'mailto:guilledg1@gmail.com' },
 	],
 
