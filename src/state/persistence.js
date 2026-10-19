@@ -4,11 +4,8 @@ import { ITEMS_BY_ID, QUESTS } from './catalog';
 // `unknown` y se valida: si la partida está corrupta, se descarta y se empieza
 // de cero en vez de romper la página.
 
-export const SAVE_KEY = 'palantir:save';
+export const SAVE_KEY = 'portfolio:save';
 export const SAVE_VERSION = 1;
-
-/** Claves de la época en que cada demo guardaba lo suyo por separado. */
-const LEGACY_KEYS = ['palantir:vue-cart', 'palantir:svelte-recipes'];
 
 /**
  * Migraciones de esquema: la entrada `n` convierte una partida de la versión
@@ -102,12 +99,6 @@ export function writeSave(state) {
 	try {
 		const raw = JSON.stringify(state);
 		if (localStorage.getItem(SAVE_KEY) !== raw) localStorage.setItem(SAVE_KEY, raw);
-	} catch {}
-}
-
-export function clearLegacyKeys() {
-	try {
-		LEGACY_KEYS.forEach((k) => localStorage.removeItem(k));
 	} catch {}
 }
 

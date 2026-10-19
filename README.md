@@ -1,4 +1,4 @@
-# Palantir
+# Guillermo Domínguez · Portfolio de 8 bits
 
 Portfolio jugable de 8 bits. Recorre el pueblo y entra en cada edificio para ver una skill hecha con su propio framework, junto a un cartel con las buenas prácticas que aplica.
 
@@ -31,7 +31,7 @@ flowchart TB
     subgraph state ["src/state (JavaScript plano)"]
         A["actions.js<br/>funciones puras + wrappers"] -->|"set()"| P[("$player<br/>oro · XP · inventario · misiones")]
         A -->|"emit()"| E["events.js<br/>bus de eventos"]
-        P <-->|"onMount: cargar / guardar"| L[("localStorage<br/>palantir:save")]
+        P <-->|"onMount: cargar / guardar"| L[("localStorage<br/>portfolio:save")]
     end
 
     P -->|"useStore (@nanostores/vue)"| V[Isla Vue]
@@ -45,7 +45,7 @@ flowchart TB
 
 - **Las acciones** son funciones puras `(estado, args) → { ok, state } | { ok: false, reason }`. Si algo no cuadra, el estado no cambia, y cada demo muestra el motivo con su propio estilo.
 - **Los eventos** (`potion:brewed`, `quest:completed`, `level:up`…) le dicen al juego qué acaba de pasar, para mostrar notificaciones al estilo Pokémon.
-- **La persistencia** solo funciona en el navegador y valida lo que lee: si `palantir:save` está corrupto, se empieza una partida nueva sin errores.
+- **La persistencia** solo funciona en el navegador y valida lo que lee: si `portfolio:save` está corrupto, se empieza una partida nueva sin errores.
 - **El SSR no se rompe:** cada isla pinta el estado inicial hasta montarse y después pasa a la partida guardada.
 
 Por qué elegí nanostores y no otras opciones: [ADR 001](docs/adr/001-estado-compartido-entre-islas.md).

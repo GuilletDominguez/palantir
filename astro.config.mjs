@@ -18,7 +18,7 @@ import svelte from '@astrojs/svelte';
  */
 function isolateVueFromReactRefresh() {
   return {
-    name: 'palantir:isolate-vue-from-react-refresh',
+    name: 'portfolio:isolate-vue-from-react-refresh',
     apply: 'serve',
     configureServer(server) {
       const vuePlugin = server.config.plugins.find((p) => p.name === 'vite:vue');
@@ -47,6 +47,9 @@ function isolateVueFromReactRefresh() {
 
 // https://astro.build/config
 export default defineConfig({
+  // URL pública: la usan la canónica, el sitemap y la imagen para redes sociales
+  site: 'https://guillermo-dominguez.pages.dev',
+
   vite: {
     plugins: [tailwindcss(), isolateVueFromReactRefresh()],
     // El worker de Python es un módulo ES: carga Pyodide con import() dinámico

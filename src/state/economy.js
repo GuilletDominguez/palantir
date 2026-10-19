@@ -1,6 +1,6 @@
 import { atom, computed, onMount } from 'nanostores';
 import { STARTING_GOLD, levelFor } from './catalog';
-import { SAVE_VERSION, clearLegacyKeys, loadSave, onExternalChange, writeSave } from './persistence';
+import { SAVE_VERSION, loadSave, onExternalChange, writeSave } from './persistence';
 
 export const createInitialState = () => ({
 	gold: STARTING_GOLD,
@@ -30,7 +30,6 @@ export const $level = computed($player, (p) => levelFor(p.xp));
 onMount($player, () => {
 	if (typeof window === 'undefined') return;
 
-	clearLegacyKeys();
 	const saved = loadSave();
 	if (saved) $player.set(saved);
 

@@ -1,10 +1,10 @@
 import { atom, onMount } from 'nanostores';
 import { DEFAULT_OUTFIT, parseOutfit } from '../game/outfit';
 
-const STORAGE_KEY = 'palantir:outfit';
+const STORAGE_KEY = 'portfolio:outfit';
 
 // Lo que lleva puesto el héroe. Es estético y no forma parte de la economía,
-// así que va en su propia clave y no toca el esquema de `palantir:save`.
+// así que va en su propia clave y no toca el esquema de `portfolio:save`.
 export const $outfit = atom(DEFAULT_OUTFIT);
 
 onMount($outfit, () => {

@@ -35,7 +35,7 @@ export const COMMON_WORDS = [
 	'hola',
 	'amor',
 	'teamo',
-	'palantir',
+	'portfolio',
 	'secret',
 	'secreto',
 	'login',

@@ -1,4 +1,4 @@
-# Arquitectura de Palantir
+# Arquitectura del portfolio
 
 Guía para entender cómo está hecho el portfolio: qué hace cada tecnología, por qué se eligió y dónde está en el código.
 
@@ -516,7 +516,7 @@ La idea es la misma en los tres casos: **hasta montarse, cada isla pinta el esta
 
 ### Persistencia
 
-La partida se guarda en `localStorage` con la clave `palantir:save`. Lo hace el `onMount` del átomo, que nanostores ejecuta cuando el store recibe su primer suscriptor:
+La partida se guarda en `localStorage` con la clave `portfolio:save`. Lo hace el `onMount` del átomo, que nanostores ejecuta cuando el store recibe su primer suscriptor:
 
 - en el servidor no hay `window`, así que no hace nada y el SSR usa el estado inicial;
 - en el navegador carga la partida, se suscribe para guardarla en cada cambio y escucha el evento `storage` para **sincronizar pestañas** (si juegas en dos, las dos se actualizan).
