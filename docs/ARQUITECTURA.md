@@ -729,7 +729,7 @@ El mapa no necesitó más cambios: `buildMap()` recorre `places` y crea para cad
 
 ## 19. Seguridad del despliegue y metadatos
 
-La web se publica en **Cloudflare Pages** (`https://guillermo-dominguez.pages.dev`), y esa URL está en `site` de [astro.config.mjs](../astro.config.mjs). La canónica, el sitemap, `robots.txt` y la imagen para redes salen de ahí: cambiar de dominio es cambiar una línea.
+La web se publica en **Cloudflare Pages** (`https://guillermo-dominguez-portfolio.pages.dev`), y esa URL está en `site` de [astro.config.mjs](../astro.config.mjs). La canónica, el sitemap, `robots.txt` y la imagen para redes salen de ahí: cambiar de dominio es cambiar una línea.
 
 ### Content-Security-Policy
 
