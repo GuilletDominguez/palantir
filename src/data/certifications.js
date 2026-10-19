@@ -1,3 +1,6 @@
+// Certificaciones: los diplomas de OpenWebinars, con su URL pública de
+// verificación. Las imágenes son WebP de 1600 px; Astro genera las miniaturas.
+
 import desarrolloSeguro from '../assets/certificaciones/desarrollo-seguro.webp';
 import ens from '../assets/certificaciones/ens.webp';
 import formacionIso from '../assets/certificaciones/formacion-iso-27001.webp';
@@ -15,6 +18,12 @@ export const CERT_GROUPS = ['Ciberseguridad', 'Normativa', 'Desarrollo'];
 
 const ow = (code) => `https://openwebinars.net/cert/${code}`;
 
+// Cada certificación:
+// - kind: "Curso" o "Itinerario" (una ruta de varios cursos).
+// - group: "Ciberseguridad", "Normativa" o "Desarrollo".
+// - date: fecha de expedición, AAAA-MM-DD.
+// - image: el diploma importado (Astro conoce su tamaño y genera las miniaturas).
+// - verifyUrl: página pública donde cualquiera puede comprobar el certificado.
 export const certifications = [
 	{
 		id: 'onboarding-ciberseguridad',

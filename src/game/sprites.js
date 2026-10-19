@@ -1,3 +1,6 @@
+// Todos los gráficos se generan en tiempo de ejecución a resolución nativa
+// (16 px por tile) a partir de cuadrículas de texto y primitivas.
+
 import { DEFAULT_OUTFIT, dress, outfitPalette } from './outfit';
 import { PALETTE } from './palette';
 import { STATUE_BUST } from './statue';
@@ -215,7 +218,7 @@ export function playerFrames(outfit = DEFAULT_OUTFIT) {
 
 // ---------------------------------------------------------------- iconos
 
-const ICONS = {
+export const ICONS = {
 	hobbies: [
 		'..rr....rr..',
 		'.rrrr..rrrr.',

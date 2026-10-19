@@ -1,0 +1,27 @@
+# Cabeceras HTTP de seguridad. Cloudflare Pages lee este archivo solo al desplegar.
+# Son las mismas que explica el cuartel de ciberseguridad, aplicadas de verdad.
+# La CSP de las páginas va en un <meta> que genera Astro (ver astro.config.mjs);
+# aquí va lo que un <meta> no puede hacer.
+
+/*
+  # Nadie puede meter la web en un iframe (clickjacking). frame-ancestors no funciona en <meta>.
+  Content-Security-Policy: frame-ancestors 'none'
+  # Siempre HTTPS durante un año, también en los subdominios
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  # El navegador no "adivina" el tipo de un archivo
+  X-Content-Type-Options: nosniff
+  # A otros sitios solo se les dice el origen, nunca la ruta completa
+  Referrer-Policy: strict-origin-when-cross-origin
+  # APIs que la web no usa: desactivadas, también para lo que se incruste
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  # Otra ventana abierta desde aquí no puede manipular esta (window.opener)
+  Cross-Origin-Opener-Policy: same-origin
+
+/_astro/*
+  # Archivos con hash en el nombre: si cambian, cambia el nombre. Caché de un año.
+  Cache-Control: public, max-age=31536000, immutable
+  # CSP del worker de Python: un worker no hereda la CSP de la página, usa la de
+  # la respuesta de su propio archivo. Solo puede cargar Pyodide desde jsDelivr y
+  # compilar WebAssembly; aunque alguien saltara el sandbox, no podría conectar
+  # con ningún otro sitio. (En los demás .js esta cabecera no tiene efecto.)
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; connect-src https://cdn.jsdelivr.net

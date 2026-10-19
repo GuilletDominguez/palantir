@@ -1,4 +1,5 @@
 // Contenido de la "tienda" de Aficiones. Los sprites son 12×12 con las letras de la paleta del juego.
+// `bonus` es el "bonus" de RPG que aporta cada afición.
 
 export const hobbies = [
 	{

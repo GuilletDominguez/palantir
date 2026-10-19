@@ -33,6 +33,7 @@ export const HERO_LEGS = LEGS_FRONT.map((legs) => toRuns(legs, legsTop));
 export const HATS = Object.fromEntries(Object.entries(HAT_GRIDS).map(([id, { top, rows }]) => [id, toRuns(rows, top)]));
 export const CAPE = toRuns(CAPE_GRID.rows, CAPE_GRID.top);
 
+// Grupos de opciones. `swatch` es el color de la muestra en las opciones de color.
 // Los valores coinciden con los selectores de Tailor.astro:
 // .tailor:has([name='shirt'][value='r']:checked) { --shirt: … }
 export const GROUPS = [

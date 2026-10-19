@@ -1,11 +1,14 @@
 ---
+import cardCss from './sec-card.css?url';
+
 const { header } = Astro.props;
 
 // Declarative Shadow DOM: el <template shadowrootmode> se convierte en la
 // sombra del elemento al parsear el HTML, sin JavaScript. <sec-card> ni
 // siquiera necesita estar registrado. Ojo con dos trampas de Astro:
-// - `<style is:inline>`: si no, Astro saca el <style> de la sombra, y ahí dentro
-//   es donde tiene que estar para aplicarse.
+// - Los estilos de la sombra van en sec-card.css, enlazado con <link> dentro de
+//   la plantilla: un <style> en línea necesitaría un hash en la CSP, y Astro no
+//   los calcula para lo marcado como is:inline.
 // - `<slot is:inline>`: si no, Astro lo toma por uno de SUS slots de componente
 //   y, como nadie le pasa contenido, no pinta nada.
 // El contenido va en el light DOM (con slots), así lo indexan los buscadores
@@ -14,22 +17,7 @@ const { header } = Astro.props;
 
 <sec-card>
 	<template shadowrootmode="open">
-		<style is:inline>
-			/* Grid para que el article se estire hasta el alto de la fila sin
-			   height: 100% (el box-sizing global de Tailwind no entra en la sombra) */
-			:host {
-				display: grid;
-			}
-			article {
-				display: grid;
-				align-content: start;
-				gap: 0.35rem;
-				padding: 0.7rem;
-				background: var(--color-px-o);
-				border: 2px solid var(--color-px-Q);
-				border-top: 6px solid var(--color-px-y);
-			}
-		</style>
+		<link rel="stylesheet" href={cardCss} />
 		<article>
 			<slot is:inline name="name"></slot>
 			<slot is:inline name="stops"></slot>

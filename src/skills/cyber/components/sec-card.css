@@ -1,0 +1,17 @@
+/* Estilos de la sombra de <sec-card>. Van en un archivo y no en un <style> en
+   línea para cumplir la CSP sin hashes: un <link> de 'self' siempre se permite. */
+
+/* Grid para que el article se estire hasta el alto de la fila sin
+   height: 100% (el box-sizing global de Tailwind no entra en la sombra) */
+:host {
+	display: grid;
+}
+article {
+	display: grid;
+	align-content: start;
+	gap: 0.35rem;
+	padding: 0.7rem;
+	background: var(--color-px-o);
+	border: 2px solid var(--color-px-Q);
+	border-top: 6px solid var(--color-px-y);
+}

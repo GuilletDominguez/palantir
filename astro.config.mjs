@@ -50,6 +50,47 @@ export default defineConfig({
   // URL pública: la usan la canónica, el sitemap y la imagen para redes sociales
   site: 'https://guillermo-dominguez.pages.dev',
 
+  // Sin Markdown en el proyecto: se desactiva Shiki, que pinta con estilos en línea
+  // incompatibles con la CSP.
+  markdown: { syntaxHighlight: false },
+
+  // Content-Security-Policy de las páginas, como <meta>. Astro calcula los hashes
+  // de sus scripts y estilos en línea, así que no hace falta 'unsafe-inline' para
+  // scripts. El worker de Python tiene su propia CSP en public/_headers.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "font-src 'self' data:",
+        "connect-src 'self'",
+        "worker-src 'self'",
+        "manifest-src 'self'",
+        "object-src 'none'",
+        "base-uri 'none'",
+        "form-action 'self'"
+      ],
+      scriptDirective: {
+        resources: ["'self'"],
+        hashes: [
+          // Script en línea que React 19 añade tras un <form action={función}>
+          // (el de "Publicar misión") para repetir los envíos hechos antes de
+          // hidratarse. Es código fijo de React; si cambiara al actualizarlo,
+          // scripts/check-csp.mjs hace fallar el build y avisa del hash nuevo.
+          'sha256-CwHpiObGc0Kj6qtRFzUVGqk0apwmCrylJaQU+RajuJ0='
+        ]
+      },
+      styleDirective: {
+        resources: [
+          "'self'",
+          // Vue y Svelte escriben atributos style="" en el HTML del servidor, y a un
+          // atributo no se le puede poner hash. Es inyección de CSS, no de scripts.
+          { resource: "'unsafe-inline'", kind: 'attribute' }
+        ]
+      }
+    }
+  },
+
   vite: {
     plugins: [tailwindcss(), isolateVueFromReactRefresh()],
     // El worker de Python es un módulo ES: carga Pyodide con import() dinámico

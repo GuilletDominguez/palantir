@@ -727,6 +727,51 @@ Dos edificios que no son skills (como Aficiones), declarados en `places` de [reg
 
 El mapa no necesitó más cambios: `buildMap()` recorre `places` y crea para cada edificio el camino hasta la carretera, el cartel y la zona para entrar. Los emblemas (medalla y martillo) son cuadrículas de 12 × 12 en `ICONS` de [sprites.js](../src/game/sprites.js).
 
+## 19. Seguridad del despliegue y metadatos
+
+La web se publica en **Cloudflare Pages** (`https://guillermo-dominguez.pages.dev`), y esa URL está en `site` de [astro.config.mjs](../astro.config.mjs). La canónica, el sitemap, `robots.txt` y la imagen para redes salen de ahí: cambiar de dominio es cambiar una línea.
+
+### Content-Security-Policy
+
+Hay **dos políticas**, porque la página y el worker de Python son documentos distintos:
+
+1. **La de las páginas**, en un `<meta>` que genera Astro (`security.csp`).
+   - Astro calcula el hash de cada script y estilo en línea que produce él mismo, así que **los scripts no necesitan `'unsafe-inline'`**. Solo se ejecuta lo que viene de la propia web (`'self'`) o tiene su hash.
+   - Además: `object-src 'none'`, `base-uri 'none'` y `form-action 'self'`.
+   - Una concesión consciente: `style-src-attr 'unsafe-inline'`. Vue y Svelte escriben atributos `style=""` en el HTML del servidor, y a un atributo no se le puede poner hash. El riesgo es inyección de CSS, no de scripts. Astro avisa al compilar de que `'self'` no se aplica a esos atributos, que es justo lo que se quiere.
+2. **La del worker de Python**, como cabecera en [public/_headers](../public/_headers). Un worker no hereda la CSP de la página: usa la de la respuesta de su propio archivo. Solo puede cargar código de `cdn.jsdelivr.net` y compilar WebAssembly (`'wasm-unsafe-eval'`). Aunque alguien saltara el sandbox de la sección 16, no podría conectar con ningún otro sitio.
+
+**Tres cosas que no tenían hash y cómo se resolvieron**:
+- **Los `<style is:inline>` del Shadow DOM declarativo** del cuartel. Astro no calcula hashes de lo marcado `is:inline`. Los estilos pasaron a [sec-card.css](../src/skills/cyber/components/sec-card.css), enlazado con `<link>` dentro de la plantilla de la sombra, que se permite como `'self'`.
+- **Un script en línea de React 19.** Tras un `<form action={función}>` (el de «Publicar misión»), React añade un fragmento que guarda los envíos hechos *antes* de hidratarse para repetirlos después. Es código fijo de React, así que su hash está en `scriptDirective.hashes`.
+- **Shiki**, el resaltador de código de Markdown, pinta con estilos en línea. El proyecto no tiene Markdown, así que está desactivado (`markdown.syntaxHighlight: false`).
+
+**La comprobación que lo protege**: `npm run build` ejecuta después [scripts/check-csp.mjs](../scripts/check-csp.mjs). Recorre cada página generada, calcula el hash de cada `<script>` y `<style>` en línea y **hace fallar el build** si alguno no está permitido por la CSP de su página. Si una actualización de React o Astro cambiara uno de esos fragmentos, el despliegue se pararía con el hash nuevo en el mensaje, en vez de publicar una web rota. Los `<script type="application/ld+json">` se excluyen, porque son datos y el navegador no los ejecuta.
+
+### Cabeceras HTTP ([public/_headers](../public/_headers))
+
+Cloudflare Pages lee este archivo al desplegar. Son las mismas cabeceras que explica el cuartel, y el cuartel lo dice:
+
+| Cabecera | Para qué |
+| --- | --- |
+| `Content-Security-Policy: frame-ancestors 'none'` | Clickjacking. Va como cabecera porque `frame-ancestors` no funciona en un `<meta>` |
+| `Strict-Transport-Security` | Siempre HTTPS, durante un año |
+| `X-Content-Type-Options: nosniff` | El navegador no adivina tipos de archivo |
+| `Referrer-Policy: strict-origin-when-cross-origin` | A otros sitios solo se les dice el origen |
+| `Permissions-Policy` | Cámara, micrófono, geolocalización, pagos… desactivados |
+| `Cross-Origin-Opener-Policy: same-origin` | Otra ventana no puede manipular esta con `window.opener` |
+| `Cache-Control: immutable` en `/_astro/*` | Los archivos llevan hash en el nombre: caché de un año |
+
+**Cómo se probó**: un servidor estático pequeño que imita a Cloudflare (sirve `dist/` y aplica `_headers`) y un recorrido con Chrome por DevTools por todos los edificios. El recorrido analiza una contraseña, ejecuta Python, abre un diploma y despliega las seis demos de la versión rápida. Por el camino registra cada violación de CSP, tanto de la página como de los workers. Resultado: ninguna.
+
+### Metadatos
+
+- **Open Graph y Twitter Card** en [Layout.astro](../src/layouts/Layout.astro): la tarjeta que aparece al compartir el enlace en LinkedIn, WhatsApp o X.
+- **La imagen** ([public/og.png](../public/og.png), 1200 × 630) es la página interna [/og/](../src/pages/og.astro), dibujada con los sprites del juego. [scripts/generate-og.mjs](../scripts/generate-og.mjs) (`npm run og`) la fotografía con Chrome. Se sube al repo, así que el build de Cloudflare no necesita Chrome. `/og/` lleva `noindex` y está excluida en `robots.txt`.
+- **Datos estructurados** `Person` (JSON-LD), para que los buscadores sepan quién es la persona del portfolio.
+- **`sitemap.xml` y `robots.txt`** son endpoints de Astro ([src/pages/](../src/pages/)) que se generan desde `site`. **`manifest.webmanifest`** da nombre, colores e icono si alguien guarda la web en la pantalla de inicio.
+- **`.node-version`** fija Node 24 para el build de Cloudflare.
+
 ## Cómo añadir una skill nueva
 
 1. Rellena su entrada en [registry.js](../src/skills/registry.js): `practices`, `tagline` y `ready: true`. El edificio ya aparece en el mapa.
@@ -741,7 +786,8 @@ El mapa no necesitó más cambios: `buildMap()` recorre `places` y crea para cad
 npm run dev           # servidor de desarrollo (o: npx astro dev --background)
 npm test              # tests con Vitest
 npm run favicon       # regenera el icono "</>" (SVG + PNG) en public/
-npm run build         # build estático en dist/
+npm run og            # regenera public/og.png (necesita Chrome)
+npm run build         # build estático en dist/ + comprobación de la CSP
 ```
 
 ## Próximas fases
@@ -749,7 +795,7 @@ npm run build         # build estático en dist/
 - ~~**Fase 2:** React y Svelte~~ ✓ (Angular se quitó del alcance).
 - ~~**Fase 2.5:** economía compartida entre las islas (tienda → laboratorio → tablón), con HUD, notificaciones, persistencia y tests~~ ✓ (sección 13 y [ADR 001](adr/001-estado-compartido-entre-islas.md)).
 - ~~**Fase 3:** CSS puro (componentes sin JS), Ciberseguridad y Python (ejecutado en el navegador con Pyodide, que se carga solo al entrar)~~ ✓ (secciones 14, 15 y 16).
-- **Fase 4:** modo lista accesible sin juego, sonido, metadatos y despliegue.
+- **Fase 4:** ~~modo lista accesible sin juego~~ ✓ (versión rápida, sección 17), ~~metadatos y cabeceras de seguridad~~ ✓ (sección 19), sonido y despliegue en Cloudflare Pages.
 - **Fase 5:** modo debug con <kbd>F3</kbd>: un inspector del store (`$player` en vivo, con la opción de editarlo) y un registro de los eventos del bus, con su hora y su contenido. Encaja con la arquitectura actual, porque solo tiene que suscribirse a `$player` y a `events`.
 - **Más adelante:**
   - Multijugador o backend: guardar la partida en un servidor en vez de en `localStorage`. La validación de `parseSave()` y las acciones puras se podrían reutilizar en el servidor.

@@ -70,6 +70,7 @@ export function buildMap() {
 		interactables.push({
 			id: place.id,
 			label: place.name,
+			// Zona (en tiles) donde aparece el aviso para interactuar
 			zone: { x: doorX - 1, y: below, w: 5, h: 2 },
 		});
 	}
@@ -108,6 +109,7 @@ export function buildMap() {
 		trees,
 		signs,
 		buildings,
+		// Estatua de la plaza, en tiles (toda su superficie es sólida)
 		statue: STATUE,
 		solid,
 		interactables,

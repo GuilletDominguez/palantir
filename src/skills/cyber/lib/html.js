@@ -42,7 +42,11 @@ export function parseInert(html) {
 	return new DOMParser().parseFromString(html.slice(0, MAX_INPUT), 'text/html');
 }
 
-/** Árbol de elementos que crearía `innerHTML`, marcando lo peligroso. */
+/**
+ * Árbol de elementos que crearía `innerHTML`, marcando lo peligroso.
+ * Devuelve un nodo por elemento: { depth, tag, attrs, danger }. `danger` dice por
+ * qué la etiqueta (o el atributo, en attrs) es peligrosa, si lo es.
+ */
 export function inspectHtml(html) {
 	const nodes = [];
 	const walk = (el, depth) => {
@@ -99,7 +103,11 @@ const DROP_WITH_CONTENT = new Set([
 	'math',
 ]);
 
-/** Saneado por lista blanca: devuelve nodos NUEVOS creados en `target`. */
+/**
+ * Saneado por lista blanca: devuelve nodos NUEVOS creados en `target`.
+ * Resultado: { fragment, removed }, donde `removed` es lo que se ha quitado,
+ * para enseñarlo en la demo.
+ */
 export function sanitizeHtml(html, target = document) {
 	const removed = [];
 	const fragment = target.createDocumentFragment();

@@ -2,11 +2,33 @@
 import '@fontsource/press-start-2p';
 import '@fontsource/vt323';
 import '../styles/global.css';
+import { profile } from '../data/profile';
 
+// title y description cambian por página; noindex aparta de los buscadores
+// las páginas internas (como /og/, que solo sirve para generar la imagen).
 const {
 	title = 'Guillermo Domínguez · Portfolio',
 	description = 'Portfolio jugable de 8 bits: recorre el pueblo y descubre cada skill hecha con su propio framework.',
+	noindex = false,
 } = Astro.props;
+
+// URLs absolutas a partir de `site` (astro.config.mjs): las redes sociales y los
+// buscadores no entienden rutas relativas.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
+
+// Datos estructurados (schema.org): le dicen a Google quién es la persona del portfolio
+const person = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: profile.name,
+	jobTitle: profile.role,
+	url: Astro.site?.href,
+	image: ogImage.href,
+	address: { '@type': 'PostalAddress', addressLocality: 'Sevilla', addressCountry: 'ES' },
+	sameAs: profile.links.filter((l) => l.href.startsWith('https://')).map((l) => l.href),
+	knowsAbout: ['Vue.js', 'Astro', 'Python', 'Django', 'Ciberseguridad', 'ISO 27001'],
+};
 
 // Icono: "</>" en pixel art con la paleta del juego. Lo generan
 // scripts/generate-favicon.mjs (npm run favicon) en SVG y en PNG.
@@ -15,15 +37,34 @@ const {
 <html lang="es">
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#1a1c2c" />
+		<meta name="generator" content={Astro.generator} />
+		{noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content={description} />
-		<meta name="theme-color" content="#1a1c2c" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="sitemap" href="/sitemap.xml" />
+
+		<!-- Open Graph y Twitter: la tarjeta que se ve al compartir el enlace -->
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="es_ES" />
+		<meta property="og:site_name" content="Guillermo Domínguez · Portfolio" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="Pixel art de la estatua y el héroe del pueblo, con el nombre y las skills" />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<script type="application/ld+json" set:html={JSON.stringify(person)} />
 	</head>
 	<body class="min-h-dvh antialiased">
 		<slot />

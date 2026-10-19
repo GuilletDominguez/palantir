@@ -74,6 +74,8 @@ export function charsetSize(password) {
 	return size;
 }
 
+// Cada patrón encontrado: { start, end, bits, finding }. `bits` es lo que
+// "cuesta" ese trozo si el atacante conoce el patrón.
 function findMatches(password) {
 	const lower = password.toLowerCase();
 	const normalized = [...lower].map((c) => LEET[c] ?? c).join('');
@@ -177,6 +179,8 @@ export function formatDuration(seconds) {
 	return 'siglos';
 }
 
+// Resultado: { length, charsetSize, bits, score (0-4), findings, crackTime }.
+// `bits` son los bits de entropía estimados tras descontar los patrones.
 export function analyzePassword(password) {
 	const chars = [...password];
 	const size = charsetSize(password);

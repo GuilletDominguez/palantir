@@ -1,0 +1,14 @@
+{
+  "name": "Guillermo Domínguez · Portfolio",
+  "short_name": "G. Domínguez",
+  "description": "Portfolio jugable de 8 bits.",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1c2c",
+  "theme_color": "#1a1c2c",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
+  ]
+}

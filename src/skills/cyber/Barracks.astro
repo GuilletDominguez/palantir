@@ -20,6 +20,10 @@ import { SECURITY_HEADERS } from './headers';
 
 	<section class="station" aria-labelledby="cyber-headers">
 		<h3 id="cyber-headers"><span>3</span> Cabeceras de seguridad</h3>
+		<p class="note">
+			No es teoría: esta web envía todas estas cabeceras. Compruébalo en las herramientas de desarrollo del navegador
+			(pestaña Red, cualquier petición, «Cabeceras de respuesta»).
+		</p>
 		<div class="cards">
 			{SECURITY_HEADERS.map((header) => <HeaderCard header={header} />)}
 		</div>
@@ -56,6 +60,12 @@ import { SECURITY_HEADERS } from './headers';
 		color: var(--color-px-o);
 		background: var(--color-px-y);
 		border: 2px solid var(--color-px-o);
+	}
+	.note {
+		margin: 0;
+		font-size: 1.1rem;
+		line-height: 1.15;
+		color: var(--color-px-q);
 	}
 	.cards {
 		display: grid;

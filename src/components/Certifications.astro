@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import { CERT_GROUPS, certifications, formatDate, totalHours } from '../data/certifications';
 
+// idPrefix: prefijo de los ids, por si la galería aparece dos veces en la misma página.
 const { idPrefix = 'cert' } = Astro.props;
 const byGroup = CERT_GROUPS.map((group) => ({
 	group,

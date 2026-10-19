@@ -3,6 +3,13 @@
 
 export const REPO_URL = 'https://github.com/GuilletDominguez/palantir';
 
+// Cada skill:
+// - roof: colores del tejado del edificio en el mapa (claro, oscuro).
+// - tile: esquina superior izquierda del edificio, en tiles.
+// - practices: buenas prácticas que explica el cartel junto a la demo.
+// - ready: false mientras el edificio está "en construcción".
+// - summary, stack: qué hace la demo y con qué tecnologías (versión rápida).
+// - source: carpeta del código en el repositorio.
 export const skills = [
 	{
 		id: 'vue',
