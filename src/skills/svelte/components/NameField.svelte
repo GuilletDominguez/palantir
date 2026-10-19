@@ -1,6 +1,6 @@
-<script lang="ts">
+<script>
 	// $bindable: el padre puede usar bind:value y el valor fluye en ambos sentidos
-	let { value = $bindable(''), placeholder }: { value?: string; placeholder: string } = $props();
+	let { value = $bindable(''), placeholder } = $props();
 	const id = $props.id();
 </script>
 

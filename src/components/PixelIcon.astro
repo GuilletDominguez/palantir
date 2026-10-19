@@ -2,11 +2,6 @@
 // Versión Astro (sin JS) del PixelIcon de Vue: un <rect> por píxel opaco.
 import { PALETTE } from '../game/palette';
 
-interface Props {
-	sprite: string[];
-	size?: number;
-}
-
 const { sprite, size = 48 } = Astro.props;
 const pixels = sprite.flatMap((row, y) =>
 	[...row].flatMap((key, x) => (PALETTE[key] ? [{ x, y, fill: PALETTE[key] }] : [])),

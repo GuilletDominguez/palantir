@@ -1,0 +1,204 @@
+---
+// La biblioteca del mago: Python de verdad (CPython 3.14 compilado a
+// WebAssembly con Pyodide) dentro de un Web Worker aislado. El HTML se genera
+// en el servidor; el JavaScript y Python se descargan al entrar en el edificio.
+import { EXAMPLES } from './examples';
+import { MAX_CODE, RUN_TIMEOUT_MS } from './protocol';
+
+const [first] = EXAMPLES;
+---
+
+<div class="library" data-library>
+	<div class="examples" role="group" aria-label="Scripts de ejemplo">
+		{
+			EXAMPLES.map((e) => (
+				<button type="button" data-example={e.id} aria-pressed={e === first ? 'true' : 'false'}>
+					{e.title}
+				</button>
+			))
+		}
+	</div>
+	<p class="description" data-description>{first.description}</p>
+
+	<div class="editor">
+		<label for="py-code">Código Python <span>(Tab sangra · Esc y Tab para salir · Ctrl+Enter ejecuta)</span></label>
+		<textarea
+			id="py-code"
+			data-code
+			maxlength={MAX_CODE}
+			spellcheck="false"
+			autocomplete="off"
+			autocapitalize="off"
+			wrap="off"
+			rows="14">{first.code}</textarea
+		>
+	</div>
+
+	<div class="toolbar">
+		<button type="button" class="run" data-run disabled>▶ Ejecutar</button>
+		<button type="button" class="stop" data-stop disabled>■ Parar</button>
+		<button type="button" class="clear" data-clear>Limpiar</button>
+		<p class="status" data-status data-state="loading" role="status">Python se descarga al entrar en la biblioteca.</p>
+	</div>
+
+	<pre class="console" data-output aria-label="Salida de Python" tabindex="0"></pre>
+
+	<p class="sandbox">
+		Tu código corre en tu navegador, en un Web Worker aislado: sin red, sin <code>eval</code>, sin acceso a la página ni a
+		tus datos, con un máximo de {RUN_TIMEOUT_MS / 1000} segundos y {MAX_CODE} caracteres. Solo recibe una copia de
+		lectura de tu partida.
+	</p>
+</div>
+
+<style>
+	.library {
+		display: grid;
+		gap: 0.8rem;
+		font-family: var(--font-body);
+		color: var(--color-px-w);
+	}
+	.examples {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	button {
+		cursor: pointer;
+		font-family: var(--font-pixel);
+		font-size: 0.5rem;
+		line-height: 1.5;
+		padding: 0.4rem 0.55rem;
+		color: var(--color-px-w);
+		background: var(--color-px-B);
+		border: 2px solid var(--color-px-o);
+	}
+	button:hover:not(:disabled) {
+		background: var(--color-px-Q);
+	}
+	button:focus-visible {
+		outline: 2px solid var(--color-px-w);
+		outline-offset: 2px;
+	}
+	button:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+	button[aria-pressed='true'] {
+		color: var(--color-px-o);
+		background: var(--color-px-y);
+	}
+	.description,
+	.sandbox,
+	.status {
+		margin: 0;
+		font-size: 1.1rem;
+		line-height: 1.15;
+	}
+	.description {
+		color: var(--color-px-q);
+	}
+	.editor {
+		display: grid;
+		gap: 0.35rem;
+	}
+	label {
+		font-family: var(--font-pixel);
+		font-size: 0.55rem;
+		color: var(--color-px-y);
+	}
+	label span {
+		color: var(--color-px-q);
+		font-size: 0.45rem;
+	}
+	textarea,
+	.console {
+		width: 100%;
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: 1.15rem;
+		line-height: 1.2;
+		tab-size: 4;
+		padding: 0.6rem 0.8rem;
+		background: var(--color-px-o);
+		border: 2px solid var(--color-px-Q);
+	}
+	textarea {
+		resize: vertical;
+		color: var(--color-px-w);
+		outline: none;
+	}
+	textarea:focus-visible {
+		border-color: var(--color-px-y);
+	}
+	.toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.run {
+		color: var(--color-px-o);
+		background: var(--color-px-g);
+		box-shadow: inset -2px -2px 0 var(--color-px-d);
+	}
+	.run:hover:not(:disabled) {
+		background: var(--color-px-l);
+	}
+	.stop {
+		background: var(--color-px-r);
+	}
+	.status {
+		color: var(--color-px-q);
+	}
+	.status[data-state='ready'] {
+		color: var(--color-px-l);
+	}
+	.status[data-state='running'] {
+		color: var(--color-px-y);
+	}
+	.status[data-state='failed'] {
+		color: var(--color-px-O);
+	}
+	.console {
+		min-height: 10rem;
+		max-height: 22rem;
+		overflow: auto;
+		white-space: pre;
+		color: var(--color-px-l);
+	}
+	.console :global(.err) {
+		color: var(--color-px-O);
+	}
+	.console :global(.info) {
+		color: var(--color-px-q);
+	}
+	.console:empty::before {
+		content: 'La salida de print() aparecerá aquí.';
+		color: var(--color-px-Q);
+	}
+	[data-running] .console {
+		border-color: var(--color-px-y);
+	}
+	.sandbox {
+		color: var(--color-px-q);
+	}
+	code {
+		font-family: var(--font-body);
+		color: var(--color-px-c);
+	}
+</style>
+
+<script>
+	// Igual que en el cuartel: el JavaScript (y los ~6 MB de Python) solo se
+	// descargan cuando la biblioteca entra en pantalla al abrir su edificio.
+	const root = document.querySelector('[data-library]');
+	if (root) {
+		const observer = new IntersectionObserver(async (entries) => {
+			if (!entries.some((e) => e.isIntersecting)) return;
+			observer.disconnect();
+			const { startLibrary } = await import('./library-client');
+			startLibrary(root);
+		});
+		observer.observe(root);
+	}
+</script>

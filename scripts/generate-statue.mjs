@@ -1,5 +1,5 @@
 // Convierte la foto en el busto de la estatua de la plaza:
-// src/game/statue.ts → cuadrícula de texto en tonos de piedra (mismo formato que sprites.ts)
+// src/game/statue.js → cuadrícula de texto en tonos de piedra (mismo formato que sprites.js)
 //
 // Uso: node scripts/generate-statue.mjs [ruta-foto]
 
@@ -94,7 +94,7 @@ async function statue(person) {
 
 	const rows = out.map((r) => r.join(''));
 	await writeFile(
-		'src/game/statue.ts',
+		'src/game/statue.js',
 		`// Generado por scripts/generate-statue.mjs: no editar a mano.
 // Busto de la estatua de la plaza, en tonos de piedra de la paleta.
 export const STATUE_BUST = [
@@ -107,4 +107,4 @@ ${rows.map((r) => `\t'${r}',`).join('\n')}
 
 const person = await cutout();
 await statue(person);
-console.log('\n✓ src/game/statue.ts generado');
+console.log('\n✓ src/game/statue.js generado');

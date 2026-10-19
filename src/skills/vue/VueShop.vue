@@ -1,22 +1,23 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref } from 'vue';
 import CartPanel from './components/CartPanel.vue';
 import CategoryTabs from './components/CategoryTabs.vue';
 import ItemCard from './components/ItemCard.vue';
 import SearchBox from './components/SearchBox.vue';
+import SellPanel from './components/SellPanel.vue';
 import { useDebouncedRef } from './composables/useDebouncedRef';
 import { useItemFilter } from './composables/useItemFilter';
-import { ITEMS, type Category } from './items';
+import { ITEMS } from './items';
 import { useCartStore } from './stores/cart';
 
 const cart = useCartStore();
 
 const query = ref('');
-const category = ref<Category | 'all'>('all');
+const category = ref('all');
 const debouncedQuery = useDebouncedRef(query, 150);
 const visible = useItemFilter(ITEMS, debouncedQuery, category);
 
-onMounted(() => cart.restore());
+onMounted(() => cart.hydrate());
 </script>
 
 <template>
@@ -32,14 +33,17 @@ onMounted(() => cart.restore());
 					v-for="item in visible"
 					:key="item.id"
 					:item="item"
-					:affordable="cart.canAfford(item)"
+					:missing-gold="cart.missingGold(item)"
 					@buy="cart.add"
 				/>
 			</TransitionGroup>
-			<p v-else class="none">No hay objetos que coincidan con «{{ debouncedQuery }}».</p>
+			<p v-else class="none">No hay ingredientes que coincidan con «{{ debouncedQuery }}».</p>
 		</section>
 
-		<CartPanel />
+		<div class="side">
+			<CartPanel />
+			<SellPanel />
+		</div>
 	</div>
 </template>
 
@@ -59,6 +63,11 @@ onMounted(() => cart.restore());
 .catalog {
 	display: grid;
 	gap: 0.9rem;
+	align-content: start;
+}
+.side {
+	display: grid;
+	gap: 1rem;
 	align-content: start;
 }
 .controls {

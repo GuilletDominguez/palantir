@@ -1,8 +1,9 @@
-<script lang="ts">
+<script>
 	import { flip } from 'svelte/animate';
 	import { fly, scale } from 'svelte/transition';
-	import { Cauldron, MAX_INGREDIENTS, MAX_STAT, type Potion } from './cauldron.svelte';
-	import { STAT_LABELS, type StatKey } from './ingredients';
+	import { INITIAL_PLAYER, $player as playerStore } from '../../state/economy';
+	import { Cauldron, MAX_INGREDIENTS, MAX_STAT } from './cauldron.svelte';
+	import { STAT_LABELS } from './ingredients';
 	import CauldronPot from './components/CauldronPot.svelte';
 	import IngredientShelf from './components/IngredientShelf.svelte';
 	import NameField from './components/NameField.svelte';
@@ -10,35 +11,36 @@
 	import RecipeBook from './components/RecipeBook.svelte';
 	import StatBar from './components/StatBar.svelte';
 
-	const STORAGE_KEY = 'palantir:svelte-recipes';
 	const lab = new Cauldron();
-	let lastPotion = $state<Potion | null>(null);
-	let loaded = $state(false);
+	let toast = $state(null);
 
-	// $effect solo se ejecuta en el navegador: aquí es seguro usar localStorage.
+	// $effect solo se ejecuta en el navegador. Hasta entonces se pinta el estado
+	// inicial, igual que en el servidor, y la hidratación no encuentra diferencias.
+	let mounted = $state(false);
 	$effect(() => {
-		try {
-			lab.book = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
-		} catch {}
-		loaded = true;
+		mounted = true;
 	});
 
-	// Se vuelve a ejecutar automáticamente cada vez que cambia lab.book
-	$effect(() => {
-		const data = JSON.stringify(lab.book);
-		if (!loaded) return;
-		try {
-			localStorage.setItem(STORAGE_KEY, data);
-		} catch {}
-	});
+	// nanostores sigue el contrato de store de Svelte: $playerStore se suscribe solo
+	const player = $derived(mounted ? $playerStore : INITIAL_PLAYER);
+	/** Unidades libres de cada ingrediente: inventario menos lo que ya está en el caldero. */
+	const available = (id) => (player.inventory[id] ?? 0) - lab.countOf(id);
 
 	function brew() {
-		lastPotion = lab.brew();
+		const batch = lab.customName.trim();
+		const potion = lab.autoName;
+		const result = lab.brew();
+		const text = result.ok
+			? batch && batch !== potion
+				? `¡Lote «${batch}» listo: +1 ${potion}!`
+				: `¡${potion} añadida al inventario!`
+			: result.reason;
+		toast = { id: Date.now(), text, error: !result.ok };
 	}
 </script>
 
 <div class="lab">
-	<IngredientShelf onpick={(i) => lab.add(i)} disabled={lab.isFull} />
+	<IngredientShelf onpick={(i) => lab.add(i)} full={lab.isFull} {available} />
 
 	<section class="workbench" aria-label="Caldero">
 		<CauldronPot color={lab.color} bubbling={!lab.isEmpty}>
@@ -60,25 +62,28 @@
 
 		<div class="stats">
 			{#each Object.entries(lab.stats) as [stat, value] (stat)}
-				<StatBar label={STAT_LABELS[stat as StatKey]} {value} max={MAX_STAT} />
+				<StatBar label={STAT_LABELS[stat]} {value} max={MAX_STAT} />
 			{/each}
 			<p class="rarity">Rareza: <strong data-rarity={lab.rarity}>{lab.isEmpty ? '—' : lab.rarity}</strong></p>
 		</div>
 
 		<NameField bind:value={lab.customName} placeholder={lab.autoName} />
 
-		<button type="button" class="brew" disabled={lab.isEmpty} onclick={brew}>Preparar poción</button>
+		<button type="button" class="brew" disabled={!!lab.blocked} aria-describedby="svelte-brew-hint" onclick={brew}>
+			Preparar poción
+		</button>
+		<p id="svelte-brew-hint" class="hint">{lab.blocked ?? '¡La mezcla coincide con una receta!'}</p>
 
 		<div class="toast-area" aria-live="polite">
-			{#key lastPotion?.id}
-				{#if lastPotion}
-					<p class="toast" in:fly={{ y: 10, duration: 250 }}>¡{lastPotion.name} guardada en el recetario!</p>
+			{#key toast?.id}
+				{#if toast}
+					<p class="toast" class:error={toast.error} in:fly={{ y: 10, duration: 250 }}>{toast.text}</p>
 				{/if}
 			{/key}
 		</div>
 	</section>
 
-	<RecipeBook potions={lab.book} />
+	<RecipeBook inventory={player.inventory} onload={(r) => lab.load(r)} />
 </div>
 
 <style>
@@ -169,6 +174,11 @@
 		background: var(--color-px-Q);
 		box-shadow: none;
 	}
+	.hint {
+		margin: -0.4rem 0 0;
+		font-size: 1.05rem;
+		color: var(--color-px-q);
+	}
 	.toast-area {
 		min-height: 1.5rem;
 	}
@@ -176,5 +186,8 @@
 		margin: 0;
 		font-size: 1.1rem;
 		color: var(--color-px-l);
+	}
+	.toast.error {
+		color: var(--color-px-O);
 	}
 </style>

@@ -5,7 +5,10 @@
       "Bash(git mv *)",
       "Bash(sed -i 's/\"pixelate\": \"node scripts\\\\/pixelate-portrait.mjs\"/\"statue\": \"node scripts\\\\/pixelate-portrait.mjs\"/' package.json)",
       "Bash(node scripts/generate-statue.mjs)",
-      "Bash(npx astro *)"
+      "Bash(npx astro *)",
+      "Bash(mkdir -p /tmp/claude-1000/-home-elbarbas-Repos-palantir/d8f6f22e-0d84-4771-9d1e-529e80416be9/scratchpad/jsify)",
+      "Bash(npm init *)",
+      "Bash(npm install *)"
     ]
   }
 }

@@ -1,33 +1,33 @@
-<script setup lang="ts">
+<script setup>
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
-import { BUDGET, useCartStore } from '../stores/cart';
+import { useCartStore } from '../stores/cart';
 import PixelIcon from './PixelIcon.vue';
 
 const cart = useCartStore();
 // storeToRefs mantiene la reactividad al desestructurar estado y getters
-const { lines, total, remaining, count } = storeToRefs(cart);
+const { lines, total, gold, count, error } = storeToRefs(cart);
 
-const spentPct = computed(() => Math.round((total.value / BUDGET) * 100));
+const spentPct = computed(() => (gold.value > 0 ? Math.min(100, Math.round((total.value / gold.value) * 100)) : 0));
 </script>
 
 <template>
 	<aside class="cart" aria-labelledby="vue-cart-title">
-		<h3 id="vue-cart-title">Mochila ({{ count }})</h3>
+		<h3 id="vue-cart-title">Carrito ({{ count }})</h3>
 
 		<div
 			class="budget"
 			role="meter"
 			:aria-valuenow="total"
 			aria-valuemin="0"
-			:aria-valuemax="BUDGET"
-			aria-label="Oro gastado"
+			:aria-valuemax="gold"
+			aria-label="Oro que vas a gastar"
 		>
 			<div class="bar" :style="{ width: `${spentPct}%` }" />
 		</div>
-		<p class="gold">Oro: {{ remaining }} / {{ BUDGET }}</p>
+		<p class="gold">Total: {{ total }} / {{ gold }} ●</p>
 
-		<p v-if="!lines.length" class="empty">La mochila está vacía.</p>
+		<p v-if="!lines.length" class="empty">El carrito está vacío.</p>
 		<TransitionGroup v-else tag="ul" name="line">
 			<li v-for="{ item, qty } in lines" :key="item.id">
 				<PixelIcon :sprite="item.sprite" :size="20" />
@@ -37,7 +37,12 @@ const spentPct = computed(() => Math.round((total.value / BUDGET) * 100));
 			</li>
 		</TransitionGroup>
 
-		<button v-if="lines.length" type="button" class="clear" @click="cart.clear()">Vaciar</button>
+		<p v-if="error" role="alert" class="error">{{ error }}</p>
+
+		<div v-if="lines.length" class="actions">
+			<button type="button" class="pay" @click="cart.checkout()">Pagar {{ total }} ●</button>
+			<button type="button" class="clear" @click="cart.clear()">Vaciar</button>
+		</div>
 	</aside>
 </template>
 
@@ -67,12 +72,17 @@ h3 {
 	transition: width 0.25s steps(5);
 }
 .gold,
-.empty {
+.empty,
+.error {
 	margin: 0;
 	font-size: 1.1rem;
 }
 .empty {
 	color: var(--color-px-q);
+}
+.error {
+	line-height: 1.1;
+	color: var(--color-px-O);
 }
 ul {
 	list-style: none;
@@ -91,7 +101,13 @@ li {
 .qty {
 	color: var(--color-px-y);
 }
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
 li button,
+.pay,
 .clear {
 	font-family: var(--font-pixel);
 	font-size: 0.55rem;
@@ -101,8 +117,16 @@ li button,
 	border: 2px solid var(--color-px-o);
 	padding: 0.25rem 0.45rem;
 }
+.pay {
+	background: var(--color-px-g);
+	color: var(--color-px-o);
+	box-shadow: inset -2px -2px 0 var(--color-px-d);
+	padding: 0.4rem 0.6rem;
+}
+.pay:hover {
+	background: var(--color-px-l);
+}
 .clear {
-	justify-self: start;
 	background: var(--color-px-B);
 }
 

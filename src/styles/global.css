@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Paleta del juego (src/game/palette.ts) expuesta como tokens: bg-px-g, text-px-y... */
+/* Paleta del juego (src/game/palette.js) expuesta como tokens: bg-px-g, text-px-y... */
 @theme {
 	--color-px-o: #1a1c2c;
 	--color-px-w: #f4f4f4;

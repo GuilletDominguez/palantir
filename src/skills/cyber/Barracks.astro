@@ -1,0 +1,94 @@
+---
+// El cuartel de la guardia: seguridad web con Web Components nativos, sin
+// framework. Las dos estaciones interactivas son Custom Elements que se cargan
+// al entrar en el edificio; las tarjetas de cabeceras son Declarative Shadow
+// DOM y no necesitan JavaScript.
+import HeaderCard from './components/HeaderCard.astro';
+import { SECURITY_HEADERS } from './headers';
+---
+
+<div class="barracks" data-barracks>
+	<section class="station" aria-labelledby="cyber-pw">
+		<h3 id="cyber-pw"><span>1</span> Analizador de contraseñas</h3>
+		<password-analyzer></password-analyzer>
+	</section>
+
+	<section class="station" aria-labelledby="cyber-xss">
+		<h3 id="cyber-xss"><span>2</span> XSS: el mismo texto, tres formas de insertarlo</h3>
+		<xss-lab></xss-lab>
+	</section>
+
+	<section class="station" aria-labelledby="cyber-headers">
+		<h3 id="cyber-headers"><span>3</span> Cabeceras de seguridad</h3>
+		<div class="cards">
+			{SECURITY_HEADERS.map((header) => <HeaderCard header={header} />)}
+		</div>
+	</section>
+</div>
+
+<style>
+	.barracks {
+		display: grid;
+		gap: 1.5rem;
+		font-family: var(--font-body);
+		color: var(--color-px-w);
+	}
+	.station {
+		display: grid;
+		gap: 0.7rem;
+	}
+	h3 {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin: 0;
+		font-family: var(--font-pixel);
+		font-size: 0.65rem;
+		line-height: 1.6;
+		color: var(--color-px-y);
+	}
+	h3 span {
+		display: grid;
+		place-items: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		flex: none;
+		color: var(--color-px-o);
+		background: var(--color-px-y);
+		border: 2px solid var(--color-px-o);
+	}
+	.cards {
+		display: grid;
+		gap: 0.6rem;
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+	}
+	/* Mientras se descarga el JavaScript, el elemento aún no está definido */
+	password-analyzer:not(:defined),
+	xss-lab:not(:defined) {
+		display: block;
+		min-height: 6rem;
+		padding: 1rem;
+		border: 2px dashed var(--color-px-Q);
+	}
+	password-analyzer:not(:defined)::before,
+	xss-lab:not(:defined)::before {
+		content: 'Cargando…';
+		font-family: var(--font-pixel);
+		font-size: 0.55rem;
+		color: var(--color-px-q);
+	}
+</style>
+
+<script>
+	// Carga diferida, como client:visible: el JavaScript de los componentes se
+	// descarga cuando el cuartel entra en pantalla (al abrir su edificio).
+	const root = document.querySelector('[data-barracks]');
+	if (root) {
+		const observer = new IntersectionObserver((entries) => {
+			if (!entries.some((e) => e.isIntersecting)) return;
+			observer.disconnect();
+			import('./elements');
+		});
+		observer.observe(root);
+	}
+</script>

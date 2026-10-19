@@ -1,11 +1,11 @@
-<script setup lang="ts">
-import { CATEGORIES, type Category } from '../items';
+<script setup>
+import { CATEGORIES } from '../items';
 
-const selected = defineModel<Category | 'all'>({ required: true });
+const selected = defineModel({ required: true });
 
-const options: { value: Category | 'all'; label: string }[] = [
+const options = [
 	{ value: 'all', label: 'Todo' },
-	...Object.entries(CATEGORIES).map(([value, label]) => ({ value: value as Category, label })),
+	...Object.entries(CATEGORIES).map(([value, label]) => ({ value, label })),
 ];
 </script>
 

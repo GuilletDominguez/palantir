@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import foto from '../assets/foto.jpg';
+import { CERT_GROUPS, certifications } from '../data/certifications';
 import { profile } from '../data/profile';
 
 const heading = 'mb-3 font-pixel text-[0.65rem] text-px-y';
@@ -27,8 +28,6 @@ const heading = 'mb-3 font-pixel text-[0.65rem] text-px-y';
 				<dd class="text-px-y">{profile.yearsOfExperience} <span class="text-px-q">(años de experiencia)</span></dd>
 				<dt class="text-px-q">Origen</dt>
 				<dd>{profile.location}</dd>
-				<dt class="text-px-q">Idiomas</dt>
-				<dd>{profile.languages}</dd>
 			</dl>
 			<ul class="flex flex-wrap gap-2">
 				{
@@ -112,10 +111,15 @@ const heading = 'mb-3 font-pixel text-[0.65rem] text-px-y';
 			</summary>
 			<dl class="grid gap-2">
 				{
-					profile.certifications.map((c) => (
+					CERT_GROUPS.map((group) => (
 						<div>
-							<dt class="font-pixel text-[0.55rem] leading-relaxed text-px-g">{c.group}</dt>
-							<dd class="text-lg leading-tight text-px-q">{c.items.join(' · ')}</dd>
+							<dt class="font-pixel text-[0.55rem] leading-relaxed text-px-g">{group}</dt>
+							<dd class="text-lg leading-tight text-px-q">
+								{certifications
+									.filter((c) => c.group === group)
+									.map((c) => c.title)
+									.join(' · ')}
+							</dd>
 						</div>
 					))
 				}

@@ -1,0 +1,34 @@
+---
+// La sastrería: personaliza al héroe sin una sola línea de JavaScript.
+// Es un componente de Astro sin directiva client:*, así que no se hidrata;
+// toda la interactividad sale de tailor.css.
+import './tailor.css';
+import { DEFAULT_OUTFIT } from '../../game/outfit';
+import ChoiceGroup from './components/ChoiceGroup.astro';
+import HeroPreview from './components/HeroPreview.astro';
+import SpecSheet from './components/SpecSheet.astro';
+import { GROUPS } from './wardrobe';
+
+// Valores iniciales: el atuendo por defecto del héroe del juego, más la pose
+// (que solo existe en el probador). El juego marca después el atuendo guardado.
+const DEFAULTS = { ...DEFAULT_OUTFIT, pose: 'walk' };
+---
+
+<form class="tailor" aria-label="Sastrería: personaliza al héroe">
+	<div class="layout">
+		<!-- El vestuario va antes en el HTML: los contadores CSS de la ficha
+		     solo suman los radios que aparecen antes que ella en el documento. -->
+		<div class="wardrobe">
+			{GROUPS.map((group) => <ChoiceGroup group={group} checked={DEFAULTS[group.name]} />)}
+			<!-- type="reset" devuelve el formulario a sus valores iniciales sin JS -->
+			<button type="reset" class="reset">Deshacer cambios</button>
+		</div>
+
+		<section class="stage" aria-label="Probador">
+			<div class="mirror">
+				<HeroPreview />
+			</div>
+			<SpecSheet />
+		</section>
+	</div>
+</form>

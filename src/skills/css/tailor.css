@@ -1,0 +1,455 @@
+/*
+ * La sastrería: toda la interactividad de la demo vive en este archivo.
+ *
+ * - @layer fija el orden de la cascada de forma explícita.
+ * - @scope (.tailor) limita los selectores a la demo sin depender del
+ *   scoping de Astro: es el aislamiento nativo de CSS.
+ * - Anidamiento nativo (&, @container dentro de reglas) sin preprocesador.
+ */
+
+/*
+ * El orden de las capas lo fija la PRIMERA vez que aparece cada una. Este
+ * archivo puede llegar al navegador antes que Tailwind, así que se declara el
+ * orden completo: si no, `tailor` quedaría por debajo de `base` (el preflight
+ * de Tailwind) y perdería, por ejemplo, el `opacity: 0` de los radios.
+ */
+@layer theme, base, components, utilities, tailor;
+@layer tailor.base, tailor.hero, tailor.choices;
+
+/* Variables registradas: al saber que son <color>, se pueden animar. */
+@property --shirt {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #3b5dc9;
+}
+@property --pants {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #29366f;
+}
+@property --hair {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #8f563b;
+}
+@property --cape {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #b13e53;
+}
+
+/* ------------------------------------------------------------------ base */
+@layer tailor.base {
+	@scope (.tailor) {
+		:scope {
+			container: tailor / inline-size;
+			transition:
+				--shirt 0.4s steps(4),
+				--pants 0.4s steps(4),
+				--hair 0.4s steps(4),
+				--cape 0.4s steps(4);
+			color: var(--color-px-w);
+			font-family: var(--font-body);
+		}
+
+		.layout {
+			/*
+			 * Estadísticas base; los radios marcados las incrementan. Se reinician
+			 * aquí y no en .tailor porque un query container aplica "style
+			 * containment": los contadores no cruzan su borde, y el reset del propio
+			 * contenedor no llegaría a sus descendientes.
+			 */
+			counter-reset: def 1 mag 1 sty 1;
+			display: grid;
+			gap: 1rem;
+
+			/* Container query: depende del ancho del panel, no de la pantalla */
+			@container tailor (min-width: 36rem) {
+				grid-template-columns: 15rem minmax(0, 1fr);
+			}
+		}
+
+		.stage {
+			/* Visualmente va primero (arriba o a la izquierda), aunque en el HTML va después */
+			order: -1;
+			min-width: 0;
+			display: grid;
+			gap: 0.8rem;
+			align-content: start;
+		}
+
+		.mirror {
+			display: grid;
+			place-items: end center;
+			min-height: 14rem;
+			padding: 1rem;
+			/* Suelo de baldosas hecho con gradientes */
+			background:
+				linear-gradient(to bottom, transparent 70%, color-mix(in srgb, var(--color-px-k), black 30%) 70%),
+				repeating-linear-gradient(90deg, var(--color-px-B) 0 1.5rem, var(--color-px-o) 1.5rem 1.6rem);
+			border: 4px solid var(--color-px-k);
+			box-shadow: inset 0 0 0 2px #5a3a28;
+		}
+
+		.wardrobe {
+			display: grid;
+			gap: 0.8rem;
+			align-content: start;
+		}
+
+		.reset {
+			justify-self: start;
+			cursor: pointer;
+			font-family: var(--font-pixel);
+			font-size: 0.55rem;
+			padding: 0.45rem 0.6rem;
+			color: var(--color-px-w);
+			background: var(--color-px-B);
+			border: 2px solid var(--color-px-o);
+
+			&:hover {
+				background: var(--color-px-Q);
+			}
+			&:focus-visible {
+				outline: 2px solid var(--color-px-w);
+				outline-offset: 2px;
+			}
+		}
+
+		/* ---- ficha técnica */
+		.spec {
+			display: grid;
+			gap: 0.3rem;
+		}
+		details {
+			background: var(--color-px-o);
+			border: 2px solid var(--color-px-Q);
+
+			&[open] {
+				border-color: var(--color-px-u);
+			}
+		}
+		summary {
+			cursor: pointer;
+			padding: 0.45rem 0.6rem;
+			font-family: var(--font-pixel);
+			font-size: 0.55rem;
+			color: var(--color-px-u);
+			list-style: none;
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+			&::before {
+				content: '▶ ';
+			}
+			details[open] > &::before {
+				content: '▼ ';
+			}
+			&:focus-visible {
+				outline: 2px solid var(--color-px-w);
+				outline-offset: -4px;
+			}
+		}
+		details > :not(summary) {
+			margin: 0;
+			padding: 0 0.6rem 0.6rem;
+			font-size: 1.1rem;
+			line-height: 1.15;
+		}
+		pre {
+			overflow-x: auto;
+			font-size: 0.95rem;
+			color: var(--color-px-l);
+		}
+		code {
+			font-family: var(--font-body);
+			color: var(--color-px-y);
+		}
+		pre code {
+			color: inherit;
+		}
+
+		.stats {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 0.2rem 1rem;
+
+			dt {
+				color: var(--color-px-q);
+			}
+			dd {
+				margin: 0;
+				font-family: var(--font-pixel);
+				font-size: 0.6rem;
+				color: var(--color-px-y);
+			}
+			/* counter() solo funciona en `content`: los números son texto generado */
+			[data-stat='def']::after {
+				content: counter(def);
+			}
+			[data-stat='mag']::after {
+				content: counter(mag);
+			}
+			[data-stat='sty']::after {
+				content: counter(sty);
+			}
+		}
+	}
+}
+
+/* ------------------------------------------------------------------ héroe */
+@layer tailor.hero {
+	@scope (.tailor) {
+		.hero {
+			width: min(100%, 9rem);
+			height: auto;
+			overflow: visible;
+		}
+
+		.hair {
+			fill: var(--hair);
+		}
+		.shirt {
+			fill: var(--shirt);
+		}
+		.pants {
+			fill: var(--pants);
+		}
+		.cape-main {
+			fill: var(--cape);
+		}
+		/* La sombra de la capa se deriva del color elegido */
+		.cape-shade {
+			fill: color-mix(in srgb, var(--cape), black 35%);
+		}
+		.shadow {
+			fill: rgb(26 28 44 / 0.45);
+			transform-box: fill-box;
+			transform-origin: center;
+		}
+
+		/* Por defecto: sin accesorios y con las piernas en reposo */
+		.hat,
+		.cape,
+		.legs-1,
+		.legs-2 {
+			display: none;
+		}
+	}
+}
+
+/* ------------------------------------------------------------------ opciones */
+@layer tailor.choices {
+	@scope (.tailor) {
+		.choices {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+			margin: 0;
+			padding: 0;
+			border: 0;
+		}
+		legend {
+			width: 100%;
+			margin-bottom: 0.35rem;
+			padding: 0;
+			font-family: var(--font-pixel);
+			font-size: 0.55rem;
+			color: var(--color-px-q);
+		}
+		label {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			cursor: pointer;
+			padding: 0.3rem 0.55rem;
+			font-size: 1.15rem;
+			background: var(--color-px-B);
+			border: 2px solid var(--color-px-o);
+
+			&:hover {
+				background: var(--color-px-Q);
+			}
+			/* El estado visual sale del propio radio: :has() en lugar de clases */
+			&:has(:checked) {
+				background: var(--color-px-u);
+				color: var(--color-px-o);
+			}
+			&:has(:focus-visible) {
+				outline: 2px solid var(--color-px-w);
+				outline-offset: 2px;
+			}
+		}
+		input {
+			position: absolute;
+			opacity: 0;
+			pointer-events: none;
+		}
+		.swatch {
+			width: 0.9rem;
+			height: 0.9rem;
+			background: var(--swatch);
+			border: 2px solid color-mix(in srgb, var(--swatch), black 50%);
+		}
+
+	}
+
+	/*
+	 * Reglas de estado: van fuera de @scope a propósito. Combinar :has() con
+	 * @scope (:scope:has(...)) es lo más nuevo de la demo, y si un navegador no
+	 * recalcula bien ese :has() al marcar un radio, el héroe no cambiaría.
+	 * `.tailor:has(...)` es :has() clásico, estable desde Chrome 105.
+	 */
+	.tailor {
+		/* ---- colores: cada radio marcado cambia una variable de la demo */
+		&:has([name='shirt'][value='r']:checked) {
+			--shirt: var(--color-px-r);
+		}
+		&:has([name='shirt'][value='g']:checked) {
+			--shirt: var(--color-px-g);
+		}
+		&:has([name='shirt'][value='p']:checked) {
+			--shirt: var(--color-px-p);
+		}
+		&:has([name='pants'][value='K']:checked) {
+			--pants: #5a3a28;
+		}
+		&:has([name='pants'][value='Q']:checked) {
+			--pants: var(--color-px-Q);
+		}
+		&:has([name='hair'][value='y']:checked) {
+			--hair: var(--color-px-y);
+		}
+		&:has([name='hair'][value='O']:checked) {
+			--hair: var(--color-px-O);
+		}
+		&:has([name='hair'][value='B']:checked) {
+			--hair: var(--color-px-B);
+		}
+		&:has([name='cape'][value='u']:checked) {
+			--cape: var(--color-px-u);
+		}
+
+		/* ---- accesorios */
+		&:has([name='hat'][value='wizard']:checked) .hat-wizard,
+		&:has([name='hat'][value='helmet']:checked) .hat-helmet,
+		&:has([name='hat'][value='crown']:checked) .hat-crown,
+		&:has([name='cape']:not([value='none']):checked) .cape {
+			display: inline;
+		}
+
+		/* ---- estadísticas: cada prenda suma con counter-increment */
+		[name='hat'][value='wizard']:checked {
+			counter-increment: mag 3;
+		}
+		[name='hat'][value='helmet']:checked {
+			counter-increment: def 3;
+		}
+		[name='hat'][value='crown']:checked {
+			counter-increment: sty 3 mag 1;
+		}
+		[name='cape'][value='r']:checked {
+			counter-increment: def 1 sty 2;
+		}
+		[name='cape'][value='u']:checked {
+			counter-increment: mag 2 sty 1;
+		}
+
+		/* ---- poses: ciclo de 4 fotogramas (0, 1, 0, 2) como en el juego */
+		&:has([name='pose'][value='walk']:checked) {
+			.legs {
+				display: inline;
+				animation: 0.6s steps(1) infinite;
+			}
+			.legs-0 {
+				animation-name: tailor-legs-0;
+			}
+			.legs-1 {
+				animation-name: tailor-legs-1;
+			}
+			.legs-2 {
+				animation-name: tailor-legs-2;
+			}
+		}
+		&:has([name='pose'][value='jump']:checked) {
+			.figure,
+			.cape {
+				animation: tailor-jump 0.8s steps(4) infinite;
+			}
+			.shadow {
+				animation: tailor-shadow 0.8s steps(4) infinite;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+
+			.legs,
+			.figure,
+			.cape,
+			.shadow {
+				animation: none !important;
+			}
+			.legs-1,
+			.legs-2 {
+				display: none !important;
+			}
+		}
+	}
+}
+
+@keyframes tailor-legs-0 {
+	0% {
+		opacity: 1;
+	}
+	25% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	75%,
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes tailor-legs-1 {
+	0% {
+		opacity: 0;
+	}
+	25% {
+		opacity: 1;
+	}
+	50%,
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes tailor-legs-2 {
+	0% {
+		opacity: 0;
+	}
+	75%,
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes tailor-jump {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-3px);
+	}
+}
+@keyframes tailor-shadow {
+	0%,
+	100% {
+		transform: scaleX(1);
+	}
+	50% {
+		transform: scaleX(0.6);
+	}
+}

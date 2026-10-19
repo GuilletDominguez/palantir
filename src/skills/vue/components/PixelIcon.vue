@@ -1,14 +1,15 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { PALETTE } from '../../../game/palette';
 
-const { sprite, size = 32 } = defineProps<{ sprite: string[]; size?: number }>();
+const { sprite, size } = defineProps({
+	sprite: { type: Array, required: true },
+	size: { type: Number, default: 32 },
+});
 
 // Un <rect> por píxel opaco: el mismo formato de sprite que usa el juego.
 const pixels = computed(() =>
-	sprite.flatMap((row, y) =>
-		[...row].flatMap((key, x) => (PALETTE[key] ? [{ x, y, fill: PALETTE[key] }] : [])),
-	),
+	sprite.flatMap((row, y) => [...row].flatMap((key, x) => (PALETTE[key] ? [{ x, y, fill: PALETTE[key] }] : []))),
 );
 </script>
 

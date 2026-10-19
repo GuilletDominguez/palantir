@@ -48,14 +48,16 @@ function isolateVueFromReactRefresh() {
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss(), isolateVueFromReactRefresh()]
+    plugins: [tailwindcss(), isolateVueFromReactRefresh()],
+    // El worker de Python es un módulo ES: carga Pyodide con import() dinámico
+    worker: { format: 'es' }
   },
 
   integrations: [
     vue({ appEntrypoint: '/src/skills/vue/app' }),
-    // Solo los .tsx de su carpeta: si no, el plugin de React procesaría
+    // Solo los .jsx de su carpeta: si no, el plugin de React procesaría
     // también archivos de Vue y los CSS Modules.
-    react({ include: ['**/skills/react/**/*.tsx'] }),
+    react({ include: ['**/skills/react/**/*.jsx'] }),
     svelte()
   ]
 });

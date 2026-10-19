@@ -1,0 +1,50 @@
+---
+import { PALETTE } from '../../../game/palette';
+import { CAPE, HATS, HERO_BODY, HERO_H, HERO_LEGS, HERO_W } from '../wardrobe';
+
+// Las letras que el visitante puede cambiar no llevan color en el HTML:
+// reciben una clase y el CSS las pinta con una variable (--shirt, --hair…).
+const VARIABLE = {
+	k: 'hair',
+	b: 'shirt',
+	n: 'pants',
+	C: 'cape-main',
+	D: 'cape-shade',
+};
+
+const attrs = (r) => (VARIABLE[r.key] ? { class: VARIABLE[r.key] } : { fill: PALETTE[r.key] });
+---
+
+<svg
+	class="hero"
+	viewBox={`0 0 ${HERO_W} ${HERO_H + 1}`}
+	shape-rendering="crispEdges"
+	role="img"
+	aria-label="Vista previa del héroe con el atuendo elegido"
+>
+	<rect class="shadow" x="4" y={HERO_H} width="8" height="1" />
+	<g class="cape">
+		{CAPE.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" {...attrs(r)} />)}
+	</g>
+	<g class="figure">
+		{HERO_BODY.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" {...attrs(r)} />)}
+		{
+			HERO_LEGS.map((legs, i) => (
+				<g class={`legs legs-${i}`}>
+					{legs.map((r) => (
+						<rect x={r.x} y={r.y} width={r.w} height="1" {...attrs(r)} />
+					))}
+				</g>
+			))
+		}
+		{
+			Object.entries(HATS).map(([id, runs]) => (
+				<g class={`hat hat-${id}`}>
+					{runs.map((r) => (
+						<rect x={r.x} y={r.y} width={r.w} height="1" {...attrs(r)} />
+					))}
+				</g>
+			))
+		}
+	</g>
+</svg>

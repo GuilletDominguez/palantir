@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { useId } from 'vue';
 
-const query = defineModel<string>({ required: true });
+const query = defineModel({ required: true });
 // useId genera el mismo id en servidor y cliente
 const id = useId();
 </script>
@@ -9,7 +9,7 @@ const id = useId();
 <template>
 	<div class="search">
 		<label :for="id">Buscar</label>
-		<input :id="id" v-model="query" type="search" placeholder="espada, poción..." autocomplete="off" />
+		<input :id="id" v-model="query" type="search" placeholder="seta, cristal..." autocomplete="off" />
 	</div>
 </template>
 

@@ -1,19 +1,28 @@
-<script setup lang="ts">
-import type { Item } from '../items';
+<script setup>
 import PixelIcon from './PixelIcon.vue';
 
-defineProps<{ item: Item; affordable: boolean }>();
-const emit = defineEmits<{ buy: [item: Item] }>();
+// Props declaradas con su tipo: Vue avisa en desarrollo si llega algo inesperado
+const { item, missingGold } = defineProps({
+	item: { type: Object, required: true },
+	missingGold: { type: Number, required: true },
+});
+const emit = defineEmits(['buy']);
 </script>
 
 <template>
-	<article class="card" :class="{ disabled: !affordable }">
+	<article class="card" :class="{ disabled: missingGold > 0 }">
 		<PixelIcon :sprite="item.sprite" :size="40" />
 		<h4>{{ item.name }}</h4>
 		<p class="price">{{ item.price }} <span aria-label="monedas">●</span></p>
-		<button type="button" :disabled="!affordable" @click="emit('buy', item)">
-			{{ affordable ? 'Comprar' : 'Sin oro' }}
+		<button
+			type="button"
+			:disabled="missingGold > 0"
+			:aria-describedby="missingGold > 0 ? `vue-missing-${item.id}` : undefined"
+			@click="emit('buy', item)"
+		>
+			{{ missingGold > 0 ? 'Sin oro' : 'Al carrito' }}
 		</button>
+		<p v-if="missingGold > 0" :id="`vue-missing-${item.id}`" class="reason">Te faltan {{ missingGold }} ●</p>
 	</article>
 </template>
 
@@ -56,6 +65,12 @@ button:active:not(:disabled) {
 }
 .disabled {
 	opacity: 0.55;
+}
+.reason {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1;
+	color: var(--color-px-O);
 }
 button:disabled {
 	cursor: not-allowed;

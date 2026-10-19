@@ -3,8 +3,13 @@ import { skills } from '../skills/registry';
 import VueShop from '../skills/vue/VueShop.vue';
 import QuestBoard from '../skills/react/QuestBoard';
 import AlchemyLab from '../skills/svelte/AlchemyLab.svelte';
+import Tailor from '../skills/css/Tailor.astro';
+import Barracks from '../skills/cyber/Barracks.astro';
+import Library from '../skills/python/Library.astro';
 import AboutPanel from './AboutPanel.astro';
 import HobbiesPanel from './HobbiesPanel.astro';
+import Certifications from './Certifications.astro';
+import Projects from './Projects.astro';
 ---
 
 <dialog
@@ -26,7 +31,21 @@ import HobbiesPanel from './HobbiesPanel.astro';
 		</p>
 		<p>La estatua del centro de la plaza soy yo: acércate para saber más sobre mí. Y si quieres conocer qué hago fuera del código, pásate por la tienda de Aficiones.</p>
 		<p>Acércate a una puerta y pulsa <kbd class="font-pixel text-sm text-px-g">A</kbd> para entrar.</p>
+		<p>
+			Las tiendas de Vue, Svelte y React comparten una misma partida: compra ingredientes en la tienda, prepara
+			pociones en el laboratorio y entrégalas en el tablón de misiones para ganar oro y experiencia.
+		</p>
 		<p class="text-px-q">Todo el pueblo (sprites incluidos) está dibujado con código en un &lt;canvas&gt;.</p>
+		<p>
+			¿Sin tiempo para jugar? <a href="/resumen/" class="text-px-y underline">Mira la versión rápida</a>: el mismo
+			contenido en una página normal.
+		</p>
+		<button
+			type="button"
+			data-reset
+			class="cursor-pointer justify-self-start border-2 border-px-o bg-px-B px-3 py-2 font-pixel text-[0.55rem] text-px-w"
+			>Empezar partida nueva</button
+		>
 	</section>
 
 	<section data-panel="about" data-title="Sobre mí" hidden>
@@ -37,6 +56,18 @@ import HobbiesPanel from './HobbiesPanel.astro';
 		<HobbiesPanel />
 	</section>
 
+	<section data-panel="certs" data-title="Certificaciones" hidden class="grid gap-5 p-6">
+		<p class="text-xl leading-snug text-px-q">
+			La sala de trofeos del pueblo: cada certificado es una medalla ganada fuera del código.
+		</p>
+		<Certifications />
+	</section>
+
+	<section data-panel="projects" data-title="Proyectos" hidden class="grid gap-5 p-6">
+		<p class="text-xl leading-snug text-px-q">El taller del pueblo: proyectos propios, con su código y una demo.</p>
+		<Projects />
+	</section>
+
 	{
 		skills.map((skill) => (
 			<section data-panel={skill.id} data-title={skill.name} hidden class="grid gap-6 p-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -45,6 +76,9 @@ import HobbiesPanel from './HobbiesPanel.astro';
 					{skill.id === 'vue' && <VueShop client:visible />}
 					{skill.id === 'react' && <QuestBoard client:visible />}
 					{skill.id === 'svelte' && <AlchemyLab client:visible />}
+					{skill.id === 'css' && <Tailor />}
+					{skill.id === 'cyber' && <Barracks />}
+					{skill.id === 'python' && <Library />}
 					{!skill.ready && (
 						<p class="font-pixel text-xs leading-loose text-px-y">🚧 Edificio en construcción.</p>
 					)}
@@ -97,11 +131,19 @@ import HobbiesPanel from './HobbiesPanel.astro';
 </style>
 
 <script>
+	import { game } from '../state/actions';
 	import { $activePanel } from '../stores/ui';
 
-	const dialog = document.querySelector<HTMLDialogElement>('#skill-dialog')!;
-	const title = dialog.querySelector<HTMLElement>('#skill-dialog-title')!;
-	const panels = dialog.querySelectorAll<HTMLElement>('[data-panel]');
+	document.querySelector('[data-reset]')?.addEventListener('click', () => {
+		if (confirm('¿Seguro? Perderás el oro, el inventario y las misiones completadas.')) {
+			game.reset();
+			$activePanel.set(null);
+		}
+	});
+
+	const dialog = document.querySelector('#skill-dialog');
+	const title = dialog.querySelector('#skill-dialog-title');
+	const panels = dialog.querySelectorAll('[data-panel]');
 
 	$activePanel.subscribe((id) => {
 		if (!id) {

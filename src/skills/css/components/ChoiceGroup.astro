@@ -1,0 +1,17 @@
+---
+const { group, checked } = Astro.props;
+---
+
+<!-- Radios de verdad: se manejan con teclado y los anuncian los lectores de pantalla -->
+<fieldset class="choices">
+	<legend>{group.legend}</legend>
+	{
+		group.choices.map((c) => (
+			<label style={c.swatch ? `--swatch: ${c.swatch}` : undefined}>
+				<input type="radio" name={group.name} value={c.value} checked={c.value === checked} />
+				{c.swatch && <span class="swatch" aria-hidden="true" />}
+				{c.label}
+			</label>
+		))
+	}
+</fieldset>

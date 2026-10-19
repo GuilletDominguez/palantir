@@ -1,8 +1,8 @@
-<script lang="ts">
+<script>
 	import { cubicOut } from 'svelte/easing';
 	import { Tween } from 'svelte/motion';
 
-	let { label, value, max }: { label: string; value: number; max: number } = $props();
+	let { label, value, max } = $props();
 
 	// Tween.of sigue a `value` y anima su valor intermedio en `.current`
 	const shown = Tween.of(() => value, { duration: 450, easing: cubicOut });

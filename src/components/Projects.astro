@@ -1,0 +1,42 @@
+---
+// Lista de proyectos (edificio de Proyectos y versión rápida). Mientras no
+// haya ninguno, muestra un cartel de "en construcción".
+import { projects } from '../data/projects';
+---
+
+{
+	projects.length === 0 ? (
+		<div class="grid justify-items-start gap-3 border-2 border-dashed border-px-Q p-5">
+			<p class="font-pixel text-[0.65rem] leading-relaxed text-px-y">🚧 Próximamente</p>
+			<p class="text-xl leading-snug text-px-q">
+				Aquí irán mis proyectos personales, con su código y una demo. Los estoy preparando.
+			</p>
+		</div>
+	) : (
+		<ul class="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))]">
+			{projects.map((p) => (
+				<li class="grid content-start gap-2 border-2 border-px-o bg-px-B p-4">
+					<h3 class="font-pixel text-[0.65rem] leading-relaxed text-px-y">{p.name}</h3>
+					<p class="text-lg leading-tight">{p.description}</p>
+					<ul class="flex flex-wrap gap-1.5">
+						{p.stack.map((t) => (
+							<li class="border-2 border-px-o bg-px-o px-2 text-base text-px-c">{t}</li>
+						))}
+					</ul>
+					<p class="flex flex-wrap gap-3 font-pixel text-[0.55rem]">
+						{p.repo && (
+							<a class="text-px-u underline" href={p.repo} target="_blank" rel="noopener noreferrer">
+								Código
+							</a>
+						)}
+						{p.demo && (
+							<a class="text-px-u underline" href={p.demo} target="_blank" rel="noopener noreferrer">
+								Demo
+							</a>
+						)}
+					</p>
+				</li>
+			))}
+		</ul>
+	)
+}

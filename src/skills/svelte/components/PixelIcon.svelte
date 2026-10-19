@@ -1,7 +1,7 @@
-<script lang="ts">
+<script>
 	import { PALETTE } from '../../../game/palette';
 
-	let { sprite, size = 32 }: { sprite: string[]; size?: number } = $props();
+	let { sprite, size = 32 } = $props();
 
 	const pixels = $derived(
 		sprite.flatMap((row, y) => [...row].flatMap((key, x) => (PALETTE[key] ? [{ x, y, fill: PALETTE[key] }] : []))),

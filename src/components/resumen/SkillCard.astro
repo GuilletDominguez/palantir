@@ -1,0 +1,128 @@
+---
+import { REPO_URL } from '../../skills/registry';
+
+const { skill } = Astro.props;
+
+// La demo va oculta con el atributo `hidden` hasta pulsar "Probar la demo":
+// lo oculto no "entra en pantalla", así que client:visible (y la carga
+// diferida del cuartel y la biblioteca) esperan. La página sigue siendo ligera.
+// No se usa <details>: Chrome oculta su contenido con content-visibility, y el
+// IntersectionObserver de client:visible no vuelve a avisar al abrirlo.
+const panelId = `demo-${skill.id}`;
+---
+
+<article class="card" style={`--roof: ${skill.roof[0]}; --roof-dark: ${skill.roof[1]}`} aria-labelledby={`skill-${skill.id}`}>
+	<header class="grid gap-1">
+		<h3 id={`skill-${skill.id}`} class="font-pixel text-xs leading-relaxed text-px-w">{skill.name}</h3>
+		<p class="text-xl leading-snug text-px-q">{skill.tagline}</p>
+	</header>
+
+	{skill.summary && <p class="text-xl leading-snug">{skill.summary}</p>}
+
+	{
+		skill.stack && (
+			<ul class="flex flex-wrap gap-1.5" aria-label="Tecnologías">
+				{skill.stack.map((t) => (
+					<li class="border-2 border-px-o bg-px-o px-2 text-lg leading-snug text-px-c">{t}</li>
+				))}
+			</ul>
+		)
+	}
+
+	<section>
+		<h4 class="mb-2 font-pixel text-[0.55rem] text-px-y">Cómo está hecho</h4>
+		<ul class="grid gap-2">
+			{
+				skill.practices.map((p) => (
+					<li class="text-lg leading-tight">
+						<strong class="font-normal text-px-w">{p.title}:</strong> <span class="text-px-q">{p.detail}</span>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<footer class="flex flex-wrap items-center gap-3">
+		{
+			skill.source && (
+				<a
+					class="link"
+					href={`${REPO_URL}/tree/main/${skill.source}`}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Ver el código ↗
+				</a>
+			)
+		}
+	</footer>
+
+	<div class="demo">
+		<button type="button" class="toggle" aria-expanded="false" aria-controls={panelId} data-demo-toggle>
+			Probar la demo
+		</button>
+		<div id={panelId} class="pt-4" hidden>
+			<slot />
+		</div>
+	</div>
+</article>
+
+<script>
+	// Botón de despliegue accesible: aria-expanded indica si la demo está abierta
+	document.querySelectorAll('[data-demo-toggle]').forEach((button) => {
+		const panel = document.getElementById(button.getAttribute('aria-controls') ?? '');
+		if (!panel) return;
+		button.addEventListener('click', () => {
+			const open = button.getAttribute('aria-expanded') !== 'true';
+			button.setAttribute('aria-expanded', String(open));
+			panel.hidden = !open;
+		});
+	});
+</script>
+
+<style>
+	.card {
+		display: grid;
+		gap: 1rem;
+		padding: 1.25rem;
+		background: var(--color-px-B);
+		border: 2px solid var(--color-px-o);
+		border-top: 8px solid var(--roof);
+		box-shadow: inset 0 2px 0 var(--roof-dark);
+	}
+	.link {
+		font-family: var(--font-pixel);
+		font-size: 0.55rem;
+		padding: 0.45rem 0.6rem;
+		color: var(--color-px-o);
+		background: var(--color-px-y);
+		border: 2px solid var(--color-px-o);
+	}
+	.link:hover {
+		background: var(--color-px-w);
+	}
+	.link:focus-visible,
+	.toggle:focus-visible {
+		outline: 2px solid var(--color-px-w);
+		outline-offset: 2px;
+	}
+	.demo {
+		border-top: 2px dashed var(--color-px-Q);
+		padding-top: 0.75rem;
+	}
+	.toggle {
+		cursor: pointer;
+		font-family: var(--font-pixel);
+		font-size: 0.6rem;
+		color: var(--color-px-g);
+		background: none;
+		border: 0;
+		padding: 0;
+	}
+	.toggle::before {
+		content: '▶ ';
+	}
+	.toggle[aria-expanded='true']::before {
+		content: '▼ ';
+	}
+</style>

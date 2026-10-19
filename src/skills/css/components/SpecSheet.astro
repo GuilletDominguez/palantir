@@ -1,0 +1,39 @@
+---
+// Acordeón exclusivo nativo: los <details> con el mismo `name` se cierran
+// entre sí al abrir otro. Antes hacía falta JavaScript para esto.
+---
+
+<div class="spec">
+	<details name="tailor-spec" open>
+		<summary>Estadísticas</summary>
+		<!-- Los números los calcula CSS con contadores (counter-increment en cada radio marcado) -->
+		<dl class="stats">
+			<dt>Defensa</dt>
+			<dd data-stat="def"></dd>
+			<dt>Magia</dt>
+			<dd data-stat="mag"></dd>
+			<dt>Estilo</dt>
+			<dd data-stat="sty"></dd>
+		</dl>
+	</details>
+
+	<details name="tailor-spec">
+		<summary>¿Dónde está el JavaScript?</summary>
+		<p>
+			En ningún sitio. Cada opción es un <code>&lt;input type="radio"&gt;</code> y el resto lo hace
+			<code>:has()</code>:
+		</p>
+		<pre><code>.tailor:has([name='shirt'][value='r']:checked) {'{'}
+  --shirt: var(--color-px-r);
+{'}'}</code></pre>
+	</details>
+
+	<details name="tailor-spec">
+		<summary>¿Por qué el color cambia a saltos?</summary>
+		<p>
+			Una variable CSS normal no se puede animar: el navegador no sabe qué tipo de dato es. Con
+			<code>@property</code> se registra <code>--shirt</code> como <code>&lt;color&gt;</code> y ya admite
+			<code>transition</code>; <code>steps(4)</code> le da el aire de 8 bits.
+		</p>
+	</details>
+</div>

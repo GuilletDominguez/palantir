@@ -3,22 +3,22 @@ import '@fontsource/press-start-2p';
 import '@fontsource/vt323';
 import '../styles/global.css';
 
-interface Props {
-	title?: string;
-	description?: string;
-}
-
 const {
 	title = 'Palantir',
 	description = 'Portfolio jugable de 8 bits: recorre el pueblo y descubre cada skill hecha con su propio framework.',
 } = Astro.props;
+
+// Icono: "</>" en pixel art con la paleta del juego. Lo generan
+// scripts/generate-favicon.mjs (npm run favicon) en SVG y en PNG.
 ---
 
 <html lang="es">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="theme-color" content="#1a1c2c" />

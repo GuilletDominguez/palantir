@@ -1,16 +1,18 @@
-<script lang="ts">
-	import { INGREDIENTS, STAT_LABELS, type Ingredient, type StatKey } from '../ingredients';
+<script>
+	import { INGREDIENTS, STAT_LABELS } from '../ingredients';
 	import PixelIcon from './PixelIcon.svelte';
 
 	// Svelte 5: los eventos de componente son props de tipo callback
-	let { onpick, disabled = false }: { onpick: (ingredient: Ingredient) => void; disabled?: boolean } = $props();
+	let { onpick, full = false, available } = $props();
+
+	const hasAny = $derived(INGREDIENTS.some((i) => available(i.id) > 0));
 </script>
 
 <!-- Snippet: un trozo de marcado reutilizable con parámetros, sin crear otro componente -->
-{#snippet effects(ingredient: Ingredient)}
+{#snippet effects(ingredient)}
 	<span class="effects">
 		{#each Object.entries(ingredient.effects) as [stat, value] (stat)}
-			<span>+{value} {STAT_LABELS[stat as StatKey]}</span>
+			<span>+{value} {STAT_LABELS[stat]}</span>
 		{/each}
 	</span>
 {/snippet}
@@ -19,15 +21,25 @@
 	<h4>Ingredientes</h4>
 	<div class="grid">
 		{#each INGREDIENTS as ingredient (ingredient.id)}
-			<button type="button" {disabled} onclick={() => onpick(ingredient)} style:--swatch={ingredient.color}>
+			{@const left = available(ingredient.id)}
+			<button
+				type="button"
+				disabled={full || left <= 0}
+				onclick={() => onpick(ingredient)}
+				style:--swatch={ingredient.color}
+				aria-label="{ingredient.name}, quedan {left}"
+			>
+				<span class="count" class:none={left <= 0}>×{left}</span>
 				<PixelIcon sprite={ingredient.sprite} size={32} />
 				<span class="name">{ingredient.name}</span>
 				{@render effects(ingredient)}
 			</button>
 		{/each}
 	</div>
-	{#if disabled}
+	{#if full}
 		<p class="hint">El caldero está lleno: prepara la poción o retira algo.</p>
+	{:else if !hasAny}
+		<p class="hint">No te quedan ingredientes: cómpralos en la tienda de Vue.</p>
 	{/if}
 </section>
 
@@ -48,6 +60,7 @@
 		grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
 	}
 	button {
+		position: relative;
 		display: grid;
 		justify-items: center;
 		gap: 0.25rem;
@@ -69,6 +82,17 @@
 	button:disabled {
 		cursor: not-allowed;
 		opacity: 0.5;
+	}
+	.count {
+		position: absolute;
+		top: 0.3rem;
+		right: 0.4rem;
+		font-family: var(--font-pixel);
+		font-size: 0.5rem;
+		color: var(--color-px-y);
+	}
+	.count.none {
+		color: var(--color-px-q);
 	}
 	.name {
 		font-size: 1.15rem;

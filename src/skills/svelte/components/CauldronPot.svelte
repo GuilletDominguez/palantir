@@ -1,8 +1,6 @@
-<script lang="ts">
-	import type { Snippet } from 'svelte';
-
+<script>
 	// children: el contenido que el padre mete entre <CauldronPot>…</CauldronPot>
-	let { color, bubbling, children }: { color: string; bubbling: boolean; children?: Snippet } = $props();
+	let { color, bubbling, children } = $props();
 
 	const bubbles = [
 		{ left: 22, delay: 0, size: 6 },
