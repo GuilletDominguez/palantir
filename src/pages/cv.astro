@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/url';
 // /cv/: el CV en HTML con el diseño del CV original (banda superior con foto,
 // títulos azules). Es la fuente del PDF (scripts/generate-cv.mjs lo imprime con
 // Chrome) y también se puede leer o imprimir directamente. Texto real en una
@@ -8,16 +9,17 @@ import foto from '../assets/foto.jpg';
 import Rich from '../components/Rich.astro';
 import Layout from '../layouts/Layout.astro';
 import { buildCv, CV_FILENAME } from '../lib/cv';
+import { CANONICAL_SITE } from '../lib/site';
 
-const cv = buildCv(Astro.site);
+const cv = buildCv(CANONICAL_SITE);
 ---
 
 <Layout title={`${cv.name} · CV`} description={`${cv.role}. ${cv.headline}.`} noindex>
 	<main class="cv">
 		<nav class="actions" aria-label="Descargas">
-			<a href="/cv.pdf" download={`${CV_FILENAME}.pdf`}>Descargar PDF</a>
-			<a href="/cv.md" download={`${CV_FILENAME}.md`}>Descargar Markdown</a>
-			<a href="/">Volver al portfolio</a>
+			<a href={withBase('/cv.pdf')} download={`${CV_FILENAME}.pdf`}>Descargar PDF</a>
+			<a href={withBase('/cv.md')} download={`${CV_FILENAME}.md`}>Descargar Markdown</a>
+			<a href={withBase('/')}>Volver al portfolio</a>
 		</nav>
 
 		<article class="page">

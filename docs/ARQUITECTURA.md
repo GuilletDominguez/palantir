@@ -774,6 +774,16 @@ Cloudflare Pages lee este archivo al desplegar. Son las mismas cabeceras que exp
 - **`sitemap.xml` y `robots.txt`** son endpoints de Astro ([src/pages/](../src/pages/)) que se generan desde `site`. **`manifest.webmanifest`** da nombre, colores e icono si alguien guarda la web en la pantalla de inicio.
 - **`.node-version`** fija Node 24 para el build de Cloudflare.
 
+## Despliegue doble: Cloudflare Pages y GitHub Pages
+
+La misma web se publica en dos sitios. Cloudflare Pages la sirve en la raíz (`/`); GitHub Pages, bajo `/palantir/` (el nombre del repo). [astro.config.mjs](../astro.config.mjs) elige `site` y `base` según `GITHUB_ACTIONS`, que solo vale `true` dentro de GitHub Actions. Las URLs viven en [src/lib/site.js](../src/lib/site.js).
+
+- **Rutas internas**: nada se escribe como `/algo` a mano. [src/lib/url.js](../src/lib/url.js) ofrece `withBase('/cv.pdf')` (usa `import.meta.env.BASE_URL` y evita `//`) y `absoluteUrl(ruta, site)` para canónica, Open Graph, sitemap y `robots.txt`.
+- **`manifest.webmanifest`** está en `public/` y no pasa por Astro, así que usa rutas relativas (`./`, `favicon.svg`), válidas con cualquier base.
+- **El CV** siempre enlaza a la URL de Cloudflare, también en el build de GitHub: el PDF es un archivo fijo y [check-cv.mjs](../scripts/check-cv.mjs) exige que coincida con el Markdown.
+- **Cabeceras**: `_headers` y `_redirects` solo los lee Cloudflare; GitHub Pages los ignora (sin HSTS ni `frame-ancestors` allí). La CSP de las páginas va en un `<meta>`, así que se mantiene en los dos.
+- El workflow [.github/workflows/deploy.yml](../.github/workflows/deploy.yml) compila con `withastro/action` y publica con `actions/deploy-pages`. Al desplegar con Actions no hay Jekyll, así que `.nojekyll` no hace falta.
+
 ## 20. El CV descargable
 
 En «Sobre mí» (en el pueblo y en la versión rápida) y en la cabecera de la versión rápida se puede descargar el CV en **PDF** y en **Markdown**. También se puede ver como página en [/cv/](../src/pages/cv.astro).

@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/url';
 // Portada del portfolio (versión rápida): todo el contenido del pueblo en una
 // página normal, para quien no tiene tiempo (o no puede) jugar. El pueblo está
 // en /pueblo/. Usa los mismos datos y componentes, así que nunca se desincroniza.
@@ -49,9 +50,9 @@ const heading = 'font-pixel text-sm leading-relaxed text-px-y sm:text-base';
 					<p class="text-2xl text-px-g">{profile.role} · {profile.headline}</p>
 				</div>
 				<div class="flex flex-wrap gap-2">
-					<a href="/pueblo/" class="button">▶ Jugar en el pueblo</a>
-					<a href="/cv.pdf" download={`${CV_FILENAME}.pdf`} class="button cv">CV en PDF</a>
-					<a href="/cv.md" download={`${CV_FILENAME}.md`} class="button cv">CV en Markdown</a>
+					<a href={withBase('/pueblo/')} class="button">▶ Jugar en el pueblo</a>
+					<a href={withBase('/cv.pdf')} download={`${CV_FILENAME}.pdf`} class="button cv">CV en PDF</a>
+					<a href={withBase('/cv.md')} download={`${CV_FILENAME}.md`} class="button cv">CV en Markdown</a>
 				</div>
 			</div>
 			<p class="max-w-3xl text-xl leading-snug text-px-q">
@@ -209,7 +210,7 @@ const heading = 'font-pixel text-sm leading-relaxed text-px-y sm:text-base';
 	<footer class="border-t-4 border-px-o bg-px-B">
 		<div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-lg text-px-q sm:px-6">
 			<p>Hecho con Astro, Vue, React, Svelte, CSS, Web Components y Python.</p>
-			<a href="/pueblo/" class="button">▶ Jugar en el pueblo</a>
+			<a href={withBase('/pueblo/')} class="button">▶ Jugar en el pueblo</a>
 		</div>
 	</footer>
 </Layout>

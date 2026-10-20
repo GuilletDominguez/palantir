@@ -7,6 +7,7 @@ import vue from '@astrojs/vue';
 
 import react from '@astrojs/react';
 import svelte from '@astrojs/svelte';
+import { CANONICAL_SITE, GITHUB_BASE, GITHUB_SITE } from './src/lib/site.js';
 
 /**
  * Solo en desarrollo: @vitejs/plugin-vue reutiliza la configuración `oxc` del
@@ -45,10 +46,15 @@ function isolateVueFromReactRefresh() {
   };
 }
 
+// GitHub Actions define GITHUB_ACTIONS=true; Cloudflare Pages no.
+const isGitHub = process.env.GITHUB_ACTIONS === 'true';
+
 // https://astro.build/config
 export default defineConfig({
-  // URL pública: la usan la canónica, el sitemap y la imagen para redes sociales
-  site: 'https://guillermo-dominguez-portfolio.pages.dev',
+  // URL pública: la usan la canónica, el sitemap y la imagen para redes sociales.
+  // Cloudflare Pages en la raíz; GitHub Pages bajo /palantir/.
+  site: isGitHub ? GITHUB_SITE : CANONICAL_SITE,
+  base: isGitHub ? GITHUB_BASE : '/',
 
   // Sin Markdown en el proyecto: se desactiva Shiki, que pinta con estilos en línea
   // incompatibles con la CSP.

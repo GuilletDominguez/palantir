@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/url';
 import { Image } from 'astro:assets';
 import foto from '../assets/foto.jpg';
 import { CERT_GROUPS, certifications } from '../data/certifications';
@@ -49,18 +50,18 @@ const heading = 'mb-3 font-pixel text-[0.65rem] text-px-y';
 			<p class="flex flex-wrap items-center gap-2">
 				<span class="font-pixel text-[0.55rem] text-px-q">Descargar CV:</span>
 				<a
-					href="/cv.pdf"
+					href={withBase('/cv.pdf')}
 					download={`${CV_FILENAME}.pdf`}
 					class="inline-block border-2 border-px-o bg-px-y px-3 py-2 font-pixel text-[0.6rem] text-px-o shadow-[inset_-2px_-2px_0_var(--color-px-O)] hover:bg-px-w focus-visible:outline-2 focus-visible:outline-px-w"
 					>PDF</a
 				>
 				<a
-					href="/cv.md"
+					href={withBase('/cv.md')}
 					download={`${CV_FILENAME}.md`}
 					class="inline-block border-2 border-px-o bg-px-y px-3 py-2 font-pixel text-[0.6rem] text-px-o shadow-[inset_-2px_-2px_0_var(--color-px-O)] hover:bg-px-w focus-visible:outline-2 focus-visible:outline-px-w"
 					>Markdown</a
 				>
-				<a href="/cv/" class="text-lg text-px-q underline hover:text-px-w">ver en la web</a>
+				<a href={withBase('/cv/')} class="text-lg text-px-q underline hover:text-px-w">ver en la web</a>
 			</p>
 		</div>
 	</header>
