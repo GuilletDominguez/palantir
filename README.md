@@ -1,5 +1,5 @@
 # Guillermo Domínguez · Portfolio de 8 bits
-
+https://guillermo-dominguez-portfolio.pages.dev/
 Portfolio jugable de 8 bits. Recorre el pueblo y entra en cada edificio para ver una skill hecha con su propio framework, junto a un cartel con las buenas prácticas que aplica.
 
 Hecho con Astro (islas), un motor propio en Canvas 2D y sprites dibujados con código.
