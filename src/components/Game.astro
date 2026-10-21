@@ -92,11 +92,18 @@ const start = INITIAL_PLAYER;
 </div>
 
 <style>
+	/* Evita que el móvil seleccione las flechas o abra el menú al mantener pulsado */
+	#touch,
+	#touch * {
+		-webkit-user-select: none;
+		user-select: none;
+		-webkit-touch-callout: none;
+		-webkit-tap-highlight-color: transparent;
+	}
 	.dpad {
 		width: 3rem;
 		height: 3rem;
 		touch-action: none;
-		user-select: none;
 		background: var(--color-px-B);
 		color: var(--color-px-w);
 		border: 3px solid var(--color-px-o);

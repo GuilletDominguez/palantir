@@ -34,6 +34,9 @@ export class Input {
 		});
 		window.addEventListener('blur', () => this.reset());
 
+		touchRoot?.addEventListener('contextmenu', (e) => e.preventDefault());
+		touchRoot?.addEventListener('selectstart', (e) => e.preventDefault());
+
 		touchRoot?.querySelectorAll('[data-dir]').forEach((btn) => {
 			const dir = btn.dataset.dir;
 			btn.addEventListener('pointerdown', (e) => {
